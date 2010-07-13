@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.5.2
-Release:        2%{?dist}
+Release:        4%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -106,9 +106,12 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
+* Tue Jul 13 2010 Gerd Hoffmann <kraxel@redhat.com> - 0.5.2-4
+- Quote %% in changelog to avoid macro expansion.
+
 * Mon Jul 12 2010 Gerd Hoffmann <kraxel@redhat.com> - 0.5.2-3
-- %configure handles CFLAGS automatically, no need to fiddle
-  with %{optflags} manually.
+- %%configure handles CFLAGS automatically, no need to fiddle
+  with %%{optflags} manually.
 
 * Mon Jul 12 2010 Gerd Hoffmann <kraxel@redhat.com> - 0.5.2-2
 - Fix license: LGPL.
