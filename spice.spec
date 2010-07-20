@@ -1,17 +1,17 @@
 Name:           spice
-Version:        0.5.2
-Release:        4%{?dist}
+Version:        0.5.3
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
-Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.gz
+Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 ExclusiveArch:  i686 x86_64
 
 BuildRequires:  pkgconfig
-BuildRequires:  spice-protocol
+BuildRequires:  spice-protocol >= 0.5.3
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 BuildRequires:  libXrandr-devel
@@ -90,7 +90,7 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %defattr(-, root, root)
 %doc COPYING README NEWS
 %{_libdir}/libspice-server.so.1
-%{_libdir}/libspice-server.so.1.0.0
+%{_libdir}/libspice-server.so.1.0.1
 
 %post server -p /sbin/ldconfig
 
@@ -106,6 +106,9 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
+* Tue Jul 20 2010 Alexander Larsson <alexl@redhat.com> - 0.5.3-1
+- Update to 0.5.3
+
 * Tue Jul 13 2010 Gerd Hoffmann <kraxel@redhat.com> - 0.5.2-4
 - Quote %% in changelog to avoid macro expansion.
 
