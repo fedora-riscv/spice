@@ -1,5 +1,5 @@
 Name:           spice
-Version:        0.5.3
+Version:        0.6.0
 Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
@@ -11,7 +11,7 @@ Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.
 ExclusiveArch:  i686 x86_64
 
 BuildRequires:  pkgconfig
-BuildRequires:  spice-protocol >= 0.5.3
+BuildRequires:  spice-protocol >= 0.6.0
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 BuildRequires:  libXrandr-devel
@@ -106,6 +106,9 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
+* Tue Aug 31 2010 Alexander Larsson <alexl@redhat.com> - 0.6.0-1
+- Update to 0.6.0 (stable release)
+
 * Tue Jul 20 2010 Alexander Larsson <alexl@redhat.com> - 0.5.3-1
 - Update to 0.5.3
 
