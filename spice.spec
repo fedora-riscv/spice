@@ -90,7 +90,7 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %defattr(-, root, root)
 %doc COPYING README NEWS
 %{_libdir}/libspice-server.so.1
-%{_libdir}/libspice-server.so.1.0.1
+%{_libdir}/libspice-server.so.1.0.2
 
 %post server -p /sbin/ldconfig
 
