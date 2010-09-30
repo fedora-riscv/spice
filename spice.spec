@@ -1,5 +1,5 @@
 Name:           spice
-Version:        0.6.0
+Version:        0.6.1
 Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
@@ -106,6 +106,9 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
+* Thu Sep 30 2010 Gerd Hoffmann <kraxel@redhat.com> - 0.6.1-1
+- Update to 0.6.1.
+
 * Tue Aug 31 2010 Alexander Larsson <alexl@redhat.com> - 0.6.0-1
 - Update to 0.6.0 (stable release)
 
