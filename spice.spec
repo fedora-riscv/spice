@@ -1,5 +1,5 @@
 Name:           spice
-Version:        0.6.1
+Version:        0.6.3
 Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
@@ -11,10 +11,10 @@ Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.
 ExclusiveArch:  i686 x86_64
 
 BuildRequires:  pkgconfig
-BuildRequires:  spice-protocol >= 0.6.0
+BuildRequires:  spice-protocol >= 0.6.3
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
-BuildRequires:  libXrandr-devel
+BuildRequires:  libXrandr-devel cegui-devel
 
 %description
 The Simple Protocol for Independent Computing Environments (SPICE) is
@@ -62,10 +62,10 @@ documentation for spice-server. If you like to develop programs
 using spice-server, you will need to install spice-server-devel.
 
 %prep
-%setup -q -n spice-%{version}
+%setup -q
 
 %build
-%configure
+%configure --enable-gui
 make -C client %{?_smp_mflags}
 %ifarch x86_64
 make %{?_smp_mflags}
@@ -80,14 +80,14 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %files client
-%defattr(-, root, root)
+%defattr(-,root,root,-)
 %doc COPYING README NEWS
 %{_bindir}/spicec
 
 %ifarch x86_64
 
 %files server
-%defattr(-, root, root)
+%defattr(-,root,root,-)
 %doc COPYING README NEWS
 %{_libdir}/libspice-server.so.1
 %{_libdir}/libspice-server.so.1.0.2
@@ -97,8 +97,7 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %postun server -p /sbin/ldconfig
 
 %files server-devel
-%defattr(-, root, root)
-%doc COPYING README NEWS
+%defattr(-,root,root,-)
 %{_includedir}/spice-server
 %{_libdir}/libspice-server.so
 %{_libdir}/pkgconfig/spice-server.pc
@@ -106,6 +105,10 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
+* Mon Oct 18 2010 Hans de Goede <hdegoede@redhat.com> - 0.6.3-1
+- Update to 0.6.3
+- Enable GUI
+
 * Thu Sep 30 2010 Gerd Hoffmann <kraxel@redhat.com> - 0.6.1-1
 - Update to 0.6.1.
 
