@@ -1,0 +1,57 @@
+From 922b831db2a19e7620fa5f93b7fb33aca86f3717 Mon Sep 17 00:00:00 2001
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Thu, 28 Oct 2010 12:05:30 +0200
+Subject: [PATCH spice] spicec-x11: Listen for selection owner window destroy / close events too
+
+These rarely happen as most apps have the decency to do a SetSelectionOwner
+None before exiting. But some do not, so listen for these too.
+---
+ client/x11/platform.cpp |   18 +++++++++++++++---
+ 1 files changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/client/x11/platform.cpp b/client/x11/platform.cpp
+index 13bc0a6..2009817 100644
+--- a/client/x11/platform.cpp
++++ b/client/x11/platform.cpp
+@@ -922,7 +922,9 @@ DynamicScreen::DynamicScreen(Display* display, int screen, int& next_mon_id)
+     XRRSelectInput(display, platform_win, RRScreenChangeNotifyMask);
+     if (using_xfixes_1_0) {
+         XFixesSelectSelectionInput(display, platform_win, clipboard_prop,
+-                                   XFixesSetSelectionOwnerNotifyMask);
++                                   XFixesSetSelectionOwnerNotifyMask|
++                                   XFixesSelectionWindowDestroyNotifyMask|
++                                   XFixesSelectionClientCloseNotifyMask);
+     }
+ 
+     Monitor::self_monitors_change++;
+@@ -1224,7 +1226,9 @@ MultyMonScreen::MultyMonScreen(Display* display, int screen, int& next_mon_id)
+     X_DEBUG_SYNC(get_display());
+     if (using_xfixes_1_0) {
+         XFixesSelectSelectionInput(display, platform_win, clipboard_prop,
+-                                   XFixesSetSelectionOwnerNotifyMask);
++                                   XFixesSetSelectionOwnerNotifyMask|
++                                   XFixesSelectionWindowDestroyNotifyMask|
++                                   XFixesSelectionClientCloseNotifyMask);
+     }
+ 
+     XMonitor::inc_change_ref();
+@@ -2745,7 +2749,15 @@ static void root_win_proc(XEvent& event)
+     }
+     if (event.type == XFixesSelectionNotify + xfixes_event_base) {
+         XFixesSelectionNotifyEvent* selection_event = (XFixesSelectionNotifyEvent *)&event;
+-        if (selection_event->subtype != XFixesSetSelectionOwnerNotify) {
++        switch (selection_event->subtype) {
++        case XFixesSetSelectionOwnerNotify:
++            break;
++        /* Treat ... as a SelectionOwnerNotify None */
++        case XFixesSelectionWindowDestroyNotify:
++        case XFixesSelectionClientCloseNotify:
++            selection_event->owner = None;
++            break;
++        default:
+             LOG_INFO("Unsupported selection event %u", selection_event->subtype);
+             return;
+         }
+-- 
+1.7.3.2
+

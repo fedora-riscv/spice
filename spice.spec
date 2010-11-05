@@ -1,11 +1,17 @@
 Name:           spice
 Version:        0.6.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
+# bugfixes from upstream git
+Patch1:         0001-spicec-x11-Change-source-of-controller-socket-name-f.patch
+Patch2:         0002-client-Interpret-the-title-control-message-as-utf8-i.patch
+Patch3:         0003-Remove-no-longer-used-wstring_printf-functions.patch
+Patch4:         0004-spicec-x11-Do-not-set-_NET_WM_USER_TIME-to-0-on-star.patch
+Patch5:         0005-spicec-x11-Listen-for-selection-owner-window-destroy.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 ExclusiveArch:  i686 x86_64
@@ -63,6 +69,11 @@ using spice-server, you will need to install spice-server-devel.
 
 %prep
 %setup -q
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
 %configure --enable-gui
@@ -105,6 +116,11 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
+* Fri Nov  5 2010 Hans de Goede <hdegoede@redhat.com> - 0.6.3-2
+- Various bugfixes from upstream git:
+  - Make spicec work together with the Firefox XPI for RHEV-M
+  - Make sure the spicec window gets properly raised when first shown
+
 * Mon Oct 18 2010 Hans de Goede <hdegoede@redhat.com> - 0.6.3-1
 - Update to 0.6.3
 - Enable GUI
