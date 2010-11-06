@@ -12,6 +12,7 @@ Patch2:         0002-client-Interpret-the-title-control-message-as-utf8-i.patch
 Patch3:         0003-Remove-no-longer-used-wstring_printf-functions.patch
 Patch4:         0004-spicec-x11-Do-not-set-_NET_WM_USER_TIME-to-0-on-star.patch
 Patch5:         0005-spicec-x11-Listen-for-selection-owner-window-destroy.patch
+Patch6:         0006-spicec-Make-cegui-log-to-app_data_dir-cegui.log.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 ExclusiveArch:  i686 x86_64
@@ -74,6 +75,7 @@ using spice-server, you will need to install spice-server-devel.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 %configure --enable-gui
