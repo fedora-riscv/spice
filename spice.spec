@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.6.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -116,6 +116,10 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
+* Sat Nov  6 2010 Hans de Goede <hdegoede@redhat.com> - 0.6.3-3
+- Log to ~/.spicec/cegui.log rather then to CEGUI.log in the cwd, this
+  fixes spicec from aborting when run in a non writable dir (#650253)
+
 * Fri Nov  5 2010 Hans de Goede <hdegoede@redhat.com> - 0.6.3-2
 - Various bugfixes from upstream git:
   - Make spicec work together with the Firefox XPI for RHEV-M
