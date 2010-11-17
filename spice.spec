@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.6.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -13,6 +13,7 @@ Patch3:         0003-Remove-no-longer-used-wstring_printf-functions.patch
 Patch4:         0004-spicec-x11-Do-not-set-_NET_WM_USER_TIME-to-0-on-star.patch
 Patch5:         0005-spicec-x11-Listen-for-selection-owner-window-destroy.patch
 Patch6:         0006-spicec-Make-cegui-log-to-app_data_dir-cegui.log.patch
+Patch7:         0007-spicec-x11-Add-a-few-missing-XLockDisplay-calls-rhbz.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 ExclusiveArch:  i686 x86_64
@@ -76,6 +77,7 @@ using spice-server, you will need to install spice-server-devel.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 %configure --enable-gui
@@ -118,6 +120,9 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
+* Wed Nov 17 2010 Hans de Goede <hdegoede@redhat.com> - 0.6.3-4
+- Fix spice client locking up when dealing with XIM input (#654265)
+
 * Sat Nov  6 2010 Hans de Goede <hdegoede@redhat.com> - 0.6.3-3
 - Log to ~/.spicec/cegui.log rather then to CEGUI.log in the cwd, this
   fixes spicec from aborting when run in a non writable dir (#650253)
