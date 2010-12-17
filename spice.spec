@@ -1,5 +1,5 @@
 Name:           spice
-Version:        0.7.0
+Version:        0.7.1
 Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
@@ -106,8 +106,8 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
-* Fri Dec 17 2010 Hans de Goede <hdegoede@redhat.com> - 0.7.0-1
-- New upstream release 0.7.0
+* Fri Dec 17 2010 Hans de Goede <hdegoede@redhat.com> - 0.7.1-1
+- New upstream release 0.7.1
 - Drop all patches (all upstreamed)
 - Enable smartcard (CAC) support
 
