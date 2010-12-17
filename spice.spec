@@ -1,25 +1,11 @@
 Name:           spice
-Version:        0.6.3
-Release:        4%{?dist}
+Version:        0.7.0
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
-# bugfixes from upstream git
-Patch1:         0001-spicec-x11-Change-source-of-controller-socket-name-f.patch
-Patch2:         0002-client-Interpret-the-title-control-message-as-utf8-i.patch
-Patch3:         0003-Remove-no-longer-used-wstring_printf-functions.patch
-Patch4:         0004-spicec-x11-Do-not-set-_NET_WM_USER_TIME-to-0-on-star.patch
-Patch5:         0005-spicec-x11-Listen-for-selection-owner-window-destroy.patch
-Patch6:         0006-spicec-Make-cegui-log-to-app_data_dir-cegui.log.patch
-Patch7:         0007-spicec-Fix-info-layer-sometimes-not-showing.patch
-Patch8:         0008-spicec-Remove-empty-show-hide-gui-functions.patch
-Patch9:         0009-spicec-Don-t-show-gui-when-connection-info-is-specif.patch
-Patch10:        0010-spicec-x11-Add-a-few-missing-XLockDisplay-calls-rhbz.patch
-Patch11:        0011-spicec-x11-Fix-modifier-keys-getting-stuck-rhbz-6550.patch
-Patch12:        0012-spicec-x11-Fix-unhandled-exception-no-window-proc-cr.patch
-Patch13:        0013-spicec-Don-t-show-a-white-screen-if-guest-resolution.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 ExclusiveArch:  i686 x86_64
@@ -29,6 +15,7 @@ BuildRequires:  spice-protocol >= 0.6.3
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 BuildRequires:  libXrandr-devel cegui-devel
+BuildRequires:  libcacard-devel
 
 %description
 The Simple Protocol for Independent Computing Environments (SPICE) is
@@ -77,22 +64,9 @@ using spice-server, you will need to install spice-server-devel.
 
 %prep
 %setup -q
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
 
 %build
-%configure --enable-gui
+%configure --enable-gui --enable-smartcard
 make -C client %{?_smp_mflags}
 %ifarch x86_64
 make %{?_smp_mflags}
@@ -132,6 +106,11 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
+* Fri Dec 17 2010 Hans de Goede <hdegoede@redhat.com> - 0.7.0-1
+- New upstream release 0.7.0
+- Drop all patches (all upstreamed)
+- Enable smartcard (CAC) support
+
 * Wed Nov 17 2010 Hans de Goede <hdegoede@redhat.com> - 0.6.3-4
 - Fix the info layer not showing when used through the XPI
 - Do not let the connection gui flash by when a hostname has been specified
