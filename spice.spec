@@ -1,5 +1,5 @@
 Name:           spice
-Version:        0.7.1
+Version:        0.7.2
 Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
@@ -14,7 +14,7 @@ BuildRequires:  pkgconfig
 BuildRequires:  spice-protocol >= 0.6.3
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
-BuildRequires:  libXrandr-devel cegui-devel
+BuildRequires:  libXrandr-devel cegui06-devel
 BuildRequires:  libcacard-devel
 
 %description
@@ -106,6 +106,9 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
+* Wed Jan 19 2011 Hans de Goede <hdegoede@redhat.com> - 0.7.2-1
+- New upstream release 0.7.2
+
 * Fri Dec 17 2010 Hans de Goede <hdegoede@redhat.com> - 0.7.1-1
 - New upstream release 0.7.1
 - Drop all patches (all upstreamed)
