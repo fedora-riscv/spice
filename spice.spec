@@ -1,11 +1,12 @@
 Name:           spice
 Version:        0.8.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
+Patch0:         0001-client-Don-t-handle-hotkeys-while-sticky-alt-is-acti.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 ExclusiveArch:  i686 x86_64
@@ -64,6 +65,7 @@ using spice-server, you will need to install spice-server-devel.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %configure --enable-gui --enable-smartcard
@@ -106,6 +108,10 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
+* Fri Mar 11 2011 Hans de Goede <hdegoede@redhat.com> - 0.8.0-2
+- Fix being unable to send ctrl+alt+key when release mouse is bound to
+  ctrl+alt (which can happen when used from RHEV-M)
+
 * Tue Mar  1 2011 Hans de Goede <hdegoede@redhat.com> - 0.8.0-1
 - New upstream release 0.8.0
 
