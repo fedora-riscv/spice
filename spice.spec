@@ -15,7 +15,7 @@ BuildRequires:  spice-protocol >= 0.8.1-2
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 BuildRequires:  libXrandr-devel cegui06-devel
-BuildRequires:  libcacard-devel
+BuildRequires:  libcacard-devel cyrus-sasl-devel
 
 %description
 The Simple Protocol for Independent Computing Environments (SPICE) is
