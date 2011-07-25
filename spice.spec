@@ -1,5 +1,5 @@
 Name:           spice
-Version:        0.8.1
+Version:        0.9.0
 Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
@@ -11,7 +11,7 @@ Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.
 ExclusiveArch:  i686 x86_64
 
 BuildRequires:  pkgconfig
-BuildRequires:  spice-protocol >= 0.7.1
+BuildRequires:  spice-protocol >= 0.8.1-2
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 BuildRequires:  libXrandr-devel cegui06-devel
@@ -67,7 +67,8 @@ using spice-server, you will need to install spice-server-devel.
 
 %build
 %configure --enable-gui --enable-smartcard
-make -C client %{?_smp_mflags}
+make -C common WARN_CFLAGS='' %{?_smp_mflags}
+make -C client WARN_CFLAGS='' %{?_smp_mflags}
 %ifarch x86_64
 make %{?_smp_mflags}
 %endif
@@ -106,6 +107,9 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
+* Mon Jul 25 2011 Marc-André Lureau <marcandre.lureau@redhat.com> - 0.9.0-1
+- New upstream release 0.9.0
+
 * Wed Apr 20 2011 Hans de Goede <hdegoede@redhat.com> - 0.8.1-1
 - New upstream release 0.8.1
 
