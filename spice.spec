@@ -1,11 +1,12 @@
 Name:           spice
 Version:        0.9.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
+Source1:        spice-xpi-client-spicec
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 ExclusiveArch:  i686 x86_64
@@ -25,8 +26,10 @@ where it is running, but from anywhere on the Internet and from a wide
 variety of machine architectures.
 
 %package client
-Summary:        Implements the client side of the SPICE protocol
-Group:          User Interface/Desktops
+Summary:          Implements the client side of the SPICE protocol
+Group:            User Interface/Desktops
+Requires(post):   %{_sbindir}/update-alternatives
+Requires(postun): %{_sbindir}/update-alternatives
 
 %description client
 The Simple Protocol for Independent Computing Environments (SPICE) is
@@ -80,11 +83,25 @@ make DESTDIR=%{buildroot} install
 rm -f %{buildroot}%{_libdir}/libspice-server.a
 rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
+mkdir -p %{buildroot}%{_libexecdir}
+touch %{buildroot}%{_libexecdir}/spice-xpi-client
+install -m 0755 %{_sourcedir}/spice-xpi-client-spicec %{buildroot}%{_libexecdir}/
 
 %files client
 %defattr(-,root,root,-)
 %doc COPYING README NEWS
 %{_bindir}/spicec
+%ghost %{_libexecdir}/spice-xpi-client
+%{_libexecdir}/spice-xpi-client-spicec
+
+%post client
+%{_sbindir}/update-alternatives --install %{_libexecdir}/spice-xpi-client \
+  spice-xpi-client %{_libexecdir}/spice-xpi-client-spicec 10
+
+%postun client
+if [ $1 -eq 0 ] ; then
+  %{_sbindir}/update-alternatives --remove spice-xpi-client %{_libexecdir}/spice-xpi-client-spicec
+fi
 
 %ifarch x86_64
 
@@ -107,6 +124,9 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 %endif
 
 %changelog
+* Wed Sep 28 2011 Marc-André Lureau <marcandre.lureau@redhat.com> - 0.9.1-2
+- Provides spice-xpi-client alternative in spice-client
+
 * Thu Aug 25 2011 Hans de Goede <hdegoede@redhat.com> - 0.9.1-1
 - New upstream release 0.9.1
 
@@ -180,7 +200,7 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 - Cleanup specfile, drop bits not needed any more with
   recent rpm versions (F13+).
 - Use optflags as-is.
-- 
+-
 
 * Fri Jul 9 2010 Gerd Hoffmann <kraxel@redhat.com> - 0.5.2-1
 - initial package.
