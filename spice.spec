@@ -1,6 +1,6 @@
 Name:           spice
-Version:        0.9.1
-Release:        2%{?dist}
+Version:        0.10.0
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -12,7 +12,7 @@ Source1:        spice-xpi-client-spicec
 ExclusiveArch:  i686 x86_64
 
 BuildRequires:  pkgconfig
-BuildRequires:  spice-protocol >= 0.9.0
+BuildRequires:  spice-protocol >= 0.9.1
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 BuildRequires:  libXrandr-devel cegui06-devel
@@ -72,13 +72,10 @@ using spice-server, you will need to install spice-server-devel.
 %configure --enable-gui --enable-smartcard
 make -C common WARN_CFLAGS='' %{?_smp_mflags}
 make -C client WARN_CFLAGS='' %{?_smp_mflags}
-%ifarch x86_64
 make %{?_smp_mflags}
-%endif
 
 %install
 make DESTDIR=%{buildroot} -C client install
-%ifarch x86_64
 make DESTDIR=%{buildroot} install
 rm -f %{buildroot}%{_libdir}/libspice-server.a
 rm -f %{buildroot}%{_libdir}/libspice-server.la
@@ -103,8 +100,6 @@ if [ $1 -eq 0 ] ; then
   %{_sbindir}/update-alternatives --remove spice-xpi-client %{_libexecdir}/spice-xpi-client-spicec
 fi
 
-%ifarch x86_64
-
 %files server
 %defattr(-,root,root,-)
 %doc COPYING README NEWS
@@ -121,9 +116,11 @@ fi
 %{_libdir}/libspice-server.so
 %{_libdir}/pkgconfig/spice-server.pc
 
-%endif
-
 %changelog
+* Thu Nov 10 2011 Alon Levy <alevy@redhat.com> - 0.10.0-1
+- New upstream release 0.10.0
+- support spice-server.i686
+
 * Wed Sep 28 2011 Marc-André Lureau <marcandre.lureau@redhat.com> - 0.9.1-2
 - Provides spice-xpi-client alternative in spice-client
 
