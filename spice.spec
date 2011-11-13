@@ -79,7 +79,6 @@ make DESTDIR=%{buildroot} -C client install
 make DESTDIR=%{buildroot} install
 rm -f %{buildroot}%{_libdir}/libspice-server.a
 rm -f %{buildroot}%{_libdir}/libspice-server.la
-%endif
 mkdir -p %{buildroot}%{_libexecdir}
 touch %{buildroot}%{_libexecdir}/spice-xpi-client
 install -m 0755 %{_sourcedir}/spice-xpi-client-spicec %{buildroot}%{_libexecdir}/
