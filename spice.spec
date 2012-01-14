@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.10.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -116,6 +116,9 @@ fi
 %{_libdir}/pkgconfig/spice-server.pc
 
 %changelog
+* Sat Jan 14 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.10.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
 * Thu Nov 10 2011 Alon Levy <alevy@redhat.com> - 0.10.0-1
 - New upstream release 0.10.0
 - support spice-server.i686
