@@ -70,7 +70,7 @@ using spice-server, you will need to install spice-server-devel.
 
 %build
 %configure --enable-gui --enable-smartcard
-make %{?_smp_mflags}
+make WARN_CFLAGS='' %{?_smp_mflags}
 
 %install
 make DESTDIR=%{buildroot} install
