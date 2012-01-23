@@ -1,6 +1,6 @@
 Name:           spice
-Version:        0.10.0
-Release:        2%{?dist}
+Version:        0.10.1
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -12,7 +12,7 @@ Source1:        spice-xpi-client-spicec
 ExclusiveArch:  i686 x86_64
 
 BuildRequires:  pkgconfig
-BuildRequires:  spice-protocol >= 0.9.1
+BuildRequires:  spice-protocol >= 0.10.1
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 BuildRequires:  libXrandr-devel cegui06-devel
@@ -70,12 +70,9 @@ using spice-server, you will need to install spice-server-devel.
 
 %build
 %configure --enable-gui --enable-smartcard
-make -C common WARN_CFLAGS='' %{?_smp_mflags}
-make -C client WARN_CFLAGS='' %{?_smp_mflags}
 make %{?_smp_mflags}
 
 %install
-make DESTDIR=%{buildroot} -C client install
 make DESTDIR=%{buildroot} install
 rm -f %{buildroot}%{_libdir}/libspice-server.a
 rm -f %{buildroot}%{_libdir}/libspice-server.la
@@ -84,7 +81,6 @@ touch %{buildroot}%{_libexecdir}/spice-xpi-client
 install -m 0755 %{_sourcedir}/spice-xpi-client-spicec %{buildroot}%{_libexecdir}/
 
 %files client
-%defattr(-,root,root,-)
 %doc COPYING README NEWS
 %{_bindir}/spicec
 %ghost %{_libexecdir}/spice-xpi-client
@@ -100,7 +96,6 @@ if [ $1 -eq 0 ] ; then
 fi
 
 %files server
-%defattr(-,root,root,-)
 %doc COPYING README NEWS
 %{_libdir}/libspice-server.so.1
 %{_libdir}/libspice-server.so.1.0.2
@@ -110,12 +105,14 @@ fi
 %postun server -p /sbin/ldconfig
 
 %files server-devel
-%defattr(-,root,root,-)
 %{_includedir}/spice-server
 %{_libdir}/libspice-server.so
 %{_libdir}/pkgconfig/spice-server.pc
 
 %changelog
+* Mon Jan 23 2012 Hans de Goede <hdegoede@redhat.com> - 0.10.1-1
+- New upstream release 0.10.1
+
 * Sat Jan 14 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.10.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
