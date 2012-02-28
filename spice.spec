@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.10.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -110,6 +110,9 @@ fi
 %{_libdir}/pkgconfig/spice-server.pc
 
 %changelog
+* Tue Feb 28 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.10.1-2
+- Rebuilt for c++ ABI breakage
+
 * Mon Jan 23 2012 Hans de Goede <hdegoede@redhat.com> - 0.10.1-1
 - New upstream release 0.10.1
 
