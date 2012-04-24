@@ -1,0 +1,28 @@
+From f13ca1277418ed91d009a8db0faf36fbd1c0a7e0 Mon Sep 17 00:00:00 2001
+From: Alon Levy <alevy@redhat.com>
+Date: Tue, 20 Mar 2012 18:59:21 +0200
+Subject: [PATCH 3/4] server/red_worker: fix for case where ASSERT is compiled
+ out
+
+---
+ server/red_worker.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/server/red_worker.c b/server/red_worker.c
+index 80fa825..8a4315d 100644
+--- a/server/red_worker.c
++++ b/server/red_worker.c
+@@ -8379,9 +8379,8 @@ static void red_display_marshall_stream_clip(RedChannelClient *rcc,
+ {
+     DisplayChannelClient *dcc = RCC_TO_DCC(rcc);
+     StreamAgent *agent = item->stream_agent;
+-    Stream *stream = agent->stream;
+ 
+-    ASSERT(stream);
++    ASSERT(agent->stream);
+ 
+     red_channel_client_init_send_data(rcc, SPICE_MSG_DISPLAY_STREAM_CLIP, &item->base);
+     SpiceMsgDisplayStreamClip stream_clip;
+-- 
+1.7.10
+

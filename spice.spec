@@ -1,12 +1,16 @@
 Name:           spice
 Version:        0.10.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
 Source1:        spice-xpi-client-spicec
+Patch0:         0001-server-red_memslots-drop-two-unused-functions.patch
+Patch1:         0002-server-red_memslots-use-QXLPHYSICAL-for-addresses.patch
+Patch2:         0003-server-red_worker-fix-for-case-where-ASSERT-is-compi.patch
+Patch3:         0004-server-red_memslots-don-t-assume-64-bit-environment.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 ExclusiveArch:  i686 x86_64
@@ -67,6 +71,10 @@ using spice-server, you will need to install spice-server-devel.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
 %configure --enable-gui --enable-smartcard
@@ -110,6 +118,9 @@ fi
 %{_libdir}/pkgconfig/spice-server.pc
 
 %changelog
+* Tue Apr 24 2012 Alon Levy <alevy@redhat.com>
+- Add 32 bit fixes from git master. (#815717)
+
 * Tue Feb 28 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.10.1-2
 - Rebuilt for c++ ABI breakage
 
