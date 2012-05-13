@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.10.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -11,6 +11,7 @@ Patch0:         0001-server-red_memslots-drop-two-unused-functions.patch
 Patch1:         0002-server-red_memslots-use-QXLPHYSICAL-for-addresses.patch
 Patch2:         0003-server-red_worker-fix-for-case-where-ASSERT-is-compi.patch
 Patch3:         0004-server-red_memslots-don-t-assume-64-bit-environment.patch
+Patch4:         0005-server-red_worker-don-t-release-self_bitmap-unless-r.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 ExclusiveArch:  i686 x86_64
@@ -75,6 +76,7 @@ using spice-server, you will need to install spice-server-devel.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 %configure --enable-gui --enable-smartcard
@@ -116,6 +118,10 @@ fi
 %{_includedir}/spice-server
 %{_libdir}/libspice-server.so
 %{_libdir}/pkgconfig/spice-server.pc
+
+%changelog
+* Tue May 13 2012 Alon Levy <alevy@redhat.com>
+- Add double free fix. (#808936)
 
 %changelog
 * Tue Apr 24 2012 Alon Levy <alevy@redhat.com>

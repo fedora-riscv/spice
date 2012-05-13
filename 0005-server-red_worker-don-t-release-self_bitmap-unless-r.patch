@@ -1,0 +1,35 @@
+From ba3e9b3d792145283ff125b111b013ba392cdcbe Mon Sep 17 00:00:00 2001
+From: Yonit Halperin <yhalperi@redhat.com>
+Date: Sun, 13 May 2012 14:21:28 +0300
+Subject: [PATCH] server/red_worker: don't release self_bitmap unless refcount
+ is 0
+
+RHBZ: 808936
+---
+ server/red_worker.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/server/red_worker.c b/server/red_worker.c
+index 473d0d6..60f30d3 100644
+--- a/server/red_worker.c
++++ b/server/red_worker.c
+@@ -1695,13 +1695,12 @@ static inline void put_red_drawable(RedWorker *worker, RedDrawable *drawable, ui
+ {
+     QXLReleaseInfoExt release_info_ext;
+ 
+-    if (self_bitmap) {
+-        red_put_image(self_bitmap);
+-    }
+     if (--drawable->refs) {
+         return;
+     }
+-
++    if (self_bitmap) {
++        red_put_image(self_bitmap);
++    }
+     worker->red_drawable_count--;
+     release_info_ext.group_id = group_id;
+     release_info_ext.info = drawable->release_info;
+-- 
+1.7.10.1
+
