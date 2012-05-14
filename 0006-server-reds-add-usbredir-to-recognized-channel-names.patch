@@ -1,0 +1,27 @@
+From ce8e865cf1fcd7ee6ef2e6f8b33506df31e3345e Mon Sep 17 00:00:00 2001
+From: Alon Levy <alevy@redhat.com>
+Date: Mon, 7 May 2012 14:14:37 +0300
+Subject: [PATCH 6/8] server/reds: add "usbredir" to recognized channel names
+
+RHBZ: 819484
+
+Signed-off-by: Alon Levy <alevy@redhat.com>
+---
+ server/reds.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/server/reds.c b/server/reds.c
+index 1696fbc..26d6f89 100644
+--- a/server/reds.c
++++ b/server/reds.c
+@@ -3971,6 +3971,7 @@ SPICE_GNUC_VISIBLE int spice_server_set_channel_security(SpiceServer *s, const c
+ #ifdef USE_SMARTCARD
+         [ SPICE_CHANNEL_SMARTCARD] = "smartcard",
+ #endif
++        [ SPICE_CHANNEL_USBREDIR ] = "usbredir",
+     };
+     int i;
+ 
+-- 
+1.7.10.1
+

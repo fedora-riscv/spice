@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.10.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -12,6 +12,9 @@ Patch1:         0002-server-red_memslots-use-QXLPHYSICAL-for-addresses.patch
 Patch2:         0003-server-red_worker-fix-for-case-where-ASSERT-is-compi.patch
 Patch3:         0004-server-red_memslots-don-t-assume-64-bit-environment.patch
 Patch4:         0005-server-red_worker-don-t-release-self_bitmap-unless-r.patch
+Patch5:         0006-server-reds-add-usbredir-to-recognized-channel-names.patch
+Patch6:         0007-server-mjpeg_encoder-Fix-memory-leak-for-the-inital-.patch
+Patch7:         0008-server-mjpeg_encoder-fix-wrong-size-assigned-to-dest.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 ExclusiveArch:  i686 x86_64
@@ -77,6 +80,9 @@ using spice-server, you will need to install spice-server-devel.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
 
 %build
 %configure --enable-gui --enable-smartcard
@@ -120,7 +126,11 @@ fi
 %{_libdir}/pkgconfig/spice-server.pc
 
 %changelog
-* Tue May 13 2012 Alon Levy <alevy@redhat.com>
+* Mon May 14 2012 Alon Levy <alevy@redhat.com>
+- Fix mjpeg memory leak and bad behavior.
+- Add usbredir to list of channels for security purposes. (#819484)
+
+* Sun May 13 2012 Alon Levy <alevy@redhat.com>
 - Add double free fix. (#808936)
 
 %changelog
