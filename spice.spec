@@ -1,3 +1,9 @@
+
+# build_client:
+# If you want to build both client and server change value to 1
+# If you want to only build the server change value to 0
+%define build_client        1
+
 Name:           spice
 Version:        0.10.1
 Release:        5%{?dist}
@@ -24,7 +30,9 @@ BuildRequires:  pkgconfig
 BuildRequires:  spice-protocol >= 0.10.1
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
+%if %{build_client}
 BuildRequires:  libXrandr-devel cegui06-devel
+%endif
 BuildRequires:  libcacard-devel cyrus-sasl-devel
 BuildRequires:  autoconf automake libtool
 
@@ -35,6 +43,7 @@ you to view a computing 'desktop' environment not only on the machine
 where it is running, but from anywhere on the Internet and from a wide
 variety of machine architectures.
 
+%if %{build_client}
 %package client
 Summary:          Implements the client side of the SPICE protocol
 Group:            User Interface/Desktops
@@ -49,6 +58,7 @@ where it is running, but from anywhere on the Internet and from a wide
 variety of machine architectures.
 
 This package contains the SPICE client application.
+%endif
 
 %package server
 Summary:        Implements the server side of the SPICE protocol
@@ -88,8 +98,14 @@ using spice-server, you will need to install spice-server-devel.
 %patch8 -p1
 
 %build
+%if %{build_client}
+%define configure_client --enable-client --enable-gui
+%else
+%define configure_client --disable-client
+%endif
+
 autoreconf -fi
-%configure --enable-gui --enable-smartcard
+%configure --enable-smartcard %{configure_client}
 make WARN_CFLAGS='' %{?_smp_mflags}
 
 %install
@@ -97,10 +113,15 @@ make DESTDIR=%{buildroot} install
 rm -f %{buildroot}%{_libdir}/libspice-server.a
 rm -f %{buildroot}%{_libdir}/libspice-server.la
 mkdir -p %{buildroot}%{_libexecdir}
+
+%if %{build_client}
 touch %{buildroot}%{_libexecdir}/spice-xpi-client
 install -m 0755 %{_sourcedir}/spice-xpi-client-spicec %{buildroot}%{_libexecdir}/
+%endif
 
+%if %{build_client}
 %files client
+
 %doc COPYING README NEWS
 %{_bindir}/spicec
 %ghost %{_libexecdir}/spice-xpi-client
@@ -114,6 +135,7 @@ install -m 0755 %{_sourcedir}/spice-xpi-client-spicec %{buildroot}%{_libexecdir}
 if [ $1 -eq 0 ] ; then
   %{_sbindir}/update-alternatives --remove spice-xpi-client %{_libexecdir}/spice-xpi-client-spicec
 fi
+%endif
 
 %files server
 %doc COPYING README NEWS
