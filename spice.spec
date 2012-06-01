@@ -15,6 +15,7 @@ Patch4:         0005-server-red_worker-don-t-release-self_bitmap-unless-r.patch
 Patch5:         0006-server-reds-add-usbredir-to-recognized-channel-names.patch
 Patch6:         0007-server-mjpeg_encoder-Fix-memory-leak-for-the-inital-.patch
 Patch7:         0008-server-mjpeg_encoder-fix-wrong-size-assigned-to-dest.patch
+Patch8:         0009-spice-configure-cleanup-client-build.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 ExclusiveArch:  i686 x86_64
@@ -25,6 +26,7 @@ BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 BuildRequires:  libXrandr-devel cegui06-devel
 BuildRequires:  libcacard-devel cyrus-sasl-devel
+BuildRequires:  autoconf automake libtool
 
 %description
 The Simple Protocol for Independent Computing Environments (SPICE) is
@@ -83,8 +85,10 @@ using spice-server, you will need to install spice-server-devel.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
+autoreconf -fi
 %configure --enable-gui --enable-smartcard
 make WARN_CFLAGS='' %{?_smp_mflags}
 
