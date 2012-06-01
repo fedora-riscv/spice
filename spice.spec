@@ -3,6 +3,9 @@
 # If you want to build both client and server change value to 1
 # If you want to only build the server change value to 0
 %define build_client        1
+%if 0%{?rhel}
+%define build_client        0
+%endif
 
 Name:           spice
 Version:        0.10.1
@@ -24,7 +27,12 @@ Patch7:         0008-server-mjpeg_encoder-fix-wrong-size-assigned-to-dest.patch
 Patch8:         0009-spice-configure-cleanup-client-build.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
+
+%if 0%{?rhel}
+ExclusiveArch:  x86_64
+%else
 ExclusiveArch:  i686 x86_64
+%endif
 
 BuildRequires:  pkgconfig
 BuildRequires:  spice-protocol >= 0.10.1
