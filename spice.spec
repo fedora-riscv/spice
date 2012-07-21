@@ -9,7 +9,7 @@
 
 Name:           spice
 Version:        0.10.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -160,6 +160,9 @@ fi
 %{_libdir}/pkgconfig/spice-server.pc
 
 %changelog
+* Sat Jul 21 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.10.1-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Mon May 14 2012 Alon Levy <alevy@redhat.com>
 - Fix mjpeg memory leak and bad behavior.
 - Add usbredir to list of channels for security purposes. (#819484)
