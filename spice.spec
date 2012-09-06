@@ -8,23 +8,14 @@
 %endif
 
 Name:           spice
-Version:        0.10.1
-Release:        6%{?dist}
+Version:        0.11.3
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
 Source1:        spice-xpi-client-spicec
-Patch0:         0001-server-red_memslots-drop-two-unused-functions.patch
-Patch1:         0002-server-red_memslots-use-QXLPHYSICAL-for-addresses.patch
-Patch2:         0003-server-red_worker-fix-for-case-where-ASSERT-is-compi.patch
-Patch3:         0004-server-red_memslots-don-t-assume-64-bit-environment.patch
-Patch4:         0005-server-red_worker-don-t-release-self_bitmap-unless-r.patch
-Patch5:         0006-server-reds-add-usbredir-to-recognized-channel-names.patch
-Patch6:         0007-server-mjpeg_encoder-Fix-memory-leak-for-the-inital-.patch
-Patch7:         0008-server-mjpeg_encoder-fix-wrong-size-assigned-to-dest.patch
-Patch8:         0009-spice-configure-cleanup-client-build.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 
@@ -35,7 +26,7 @@ ExclusiveArch:  i686 x86_64
 %endif
 
 BuildRequires:  pkgconfig
-BuildRequires:  spice-protocol >= 0.10.1
+BuildRequires:  spice-protocol >= 0.12.1
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 %if %{build_client}
@@ -95,15 +86,6 @@ using spice-server, you will need to install spice-server-devel.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
 
 %build
 %if %{build_client}
@@ -148,7 +130,7 @@ fi
 %files server
 %doc COPYING README NEWS
 %{_libdir}/libspice-server.so.1
-%{_libdir}/libspice-server.so.1.0.2
+%{_libdir}/libspice-server.so.1.3.0
 
 %post server -p /sbin/ldconfig
 
@@ -160,6 +142,10 @@ fi
 %{_libdir}/pkgconfig/spice-server.pc
 
 %changelog
+* Thu Sep 6 2012 Soren Sandmann <ssp@redhat.com> - 0.11.3-1
+- Update to 0.11.3 and drop upstreamed patches
+- BuildRequire spice-protocol 0.12.1
+
 * Sat Jul 21 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.10.1-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
