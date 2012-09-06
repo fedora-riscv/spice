@@ -55,7 +55,7 @@ BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 BuildRequires:  libXrandr-devel cegui06-devel
 %endif
 BuildRequires:  libcacard-devel cyrus-sasl-devel
-BuildRequires:  autoconf automake libtool
+BuildRequires:  autoconf automake libtool pyparsing
 
 %description
 The Simple Protocol for Independent Computing Environments (SPICE) is
@@ -172,6 +172,9 @@ fi
 %{_libdir}/pkgconfig/spice-server.pc
 
 %changelog
+* Thu Sep 6 2012 Soren Sandmann <ssp@redhat.com> - 0.11.3-1
+- BuildRequire pyparsing
+
 * Thu Sep 6 2012 Soren Sandmann <ssp@redhat.com> - 0.11.3-1
 - Add capability patches
 - Add capability patches to the included copy of spice-protocol
