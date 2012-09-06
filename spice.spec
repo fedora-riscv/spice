@@ -17,6 +17,28 @@ URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
 Source1:        spice-xpi-client-spicec
 
+Patch1: 0001-client-Advertise-A8_SURFACE-capability.patch
+Patch2: 0002-Add-new-set_client_capabilities-interface-to-QXLInst.patch
+Patch3: 0003-Process-outstanding-commands-in-the-ring-after-chang.patch
+Patch4: 0004-Set-a8-capability-in-the-QXL-device-if-supported-by-.patch
+Patch5: 0005-Bump-spice.h-version-number-to-0.11.4.patch
+
+# -=-=-=- Protocol patches -=-=-=-
+#
+# FIXME: These patches are required because the upstream package now
+# includes and builds against its own copy of spice-protocol instead
+# of the one installed on the system. 
+#
+# This needs to be fixed upstream. Keeping patches in sync across
+# spice-protocol and spice is unmaintainable. Possible fixes:
+#
+#    - Stop using a spice-protocol submodule
+#
+#    - Add a configure switch to use the system spice-protocol headers.
+#
+Patch6: 0001-Add-A8-surface-capability.patch
+Patch7: 0002-Add-new-client_present-and-client-capabilities-field.patch
+
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 
 %if 0%{?rhel}
@@ -86,6 +108,14 @@ using spice-server, you will need to install spice-server-devel.
 
 %prep
 %setup -q
+%patch1 -p1 -b 0001-client-Advertise-A8_SURFACE-capability
+%patch2 -p1 -b 0002-Add-new-set_client_capabilities-interface-to-QXLInst
+%patch3 -p1 -b 0003-Process-outstanding-commands-in-the-ring-after-chang
+%patch4 -p1 -b 0004-Set-a8-capability-in-the-QXL-device-if-supported-by-
+%patch5 -p1 -b 0005-Bump-spice.h-version-number-to-0.11.4
+
+%patch6 -p1 -b 0001-Add-A8-surface-capability
+%patch7 -p1 -b 0002-Add-new-client_present-and-client-capabilities-field
 
 %build
 %if %{build_client}
@@ -142,6 +172,13 @@ fi
 %{_libdir}/pkgconfig/spice-server.pc
 
 %changelog
+* Thu Sep 6 2012 Soren Sandmann <ssp@redhat.com> - 0.11.3-1
+- Add capability patches
+- Add capability patches to the included copy of spice-protocol
+
+    Please see the comment above Patch6 and Patch7
+    regarding this situation.
+
 * Thu Sep 6 2012 Soren Sandmann <ssp@redhat.com> - 0.11.3-1
 - Update to 0.11.3 and drop upstreamed patches
 - BuildRequire spice-protocol 0.12.1

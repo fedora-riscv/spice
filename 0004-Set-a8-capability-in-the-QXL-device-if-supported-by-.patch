@@ -1,0 +1,25 @@
+From c7ab6dfdea5edca6ad407b1fcb6df5ff30007fc0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?S=C3=B8ren=20Sandmann=20Pedersen?= <ssp@redhat.com>
+Date: Sat, 1 Sep 2012 11:34:43 -0400
+Subject: [PATCH 4/5] Set a8 capability in the QXL device if supported by the client
+
+---
+ server/red_worker.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/server/red_worker.c b/server/red_worker.c
+index 75bc045..81fffd7 100644
+--- a/server/red_worker.c
++++ b/server/red_worker.c
+@@ -10362,6 +10362,8 @@ static void handle_new_display_channel(RedWorker *worker, RedClient *client, Red
+             SET_CAP(caps, SPICE_DISPLAY_CAP_MONITORS_CONFIG);
+         if (red_channel_client_test_remote_cap(rcc, SPICE_DISPLAY_CAP_COMPOSITE))
+             SET_CAP(caps, SPICE_DISPLAY_CAP_COMPOSITE);
++        if (red_channel_client_test_remote_cap(rcc, SPICE_DISPLAY_CAP_A8_SURFACE))
++            SET_CAP(caps, SPICE_DISPLAY_CAP_A8_SURFACE);
+ 
+         worker->qxl->st->qif->set_client_capabilities(worker->qxl, TRUE, caps);
+     }
+-- 
+1.7.4
+
