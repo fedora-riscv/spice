@@ -1,4 +1,3 @@
-
 # build_client:
 # If you want to build both client and server change value to 1
 # If you want to only build the server change value to 0
@@ -8,7 +7,7 @@
 %endif
 
 Name:           spice
-Version:        0.11.3
+Version:        0.12.0
 Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
@@ -17,45 +16,22 @@ URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
 Source1:        spice-xpi-client-spicec
 
-Patch1: 0001-client-Advertise-A8_SURFACE-capability.patch
-Patch2: 0002-Add-new-set_client_capabilities-interface-to-QXLInst.patch
-Patch3: 0003-Process-outstanding-commands-in-the-ring-after-chang.patch
-Patch4: 0004-Set-a8-capability-in-the-QXL-device-if-supported-by-.patch
-Patch5: 0005-Bump-spice.h-version-number-to-0.11.4.patch
-
-# -=-=-=- Protocol patches -=-=-=-
-#
-# FIXME: These patches are required because the upstream package now
-# includes and builds against its own copy of spice-protocol instead
-# of the one installed on the system. 
-#
-# This needs to be fixed upstream. Keeping patches in sync across
-# spice-protocol and spice is unmaintainable. Possible fixes:
-#
-#    - Stop using a spice-protocol submodule
-#
-#    - Add a configure switch to use the system spice-protocol headers.
-#
-Patch6: 0001-Add-A8-surface-capability.patch
-Patch7: 0002-Add-new-client_present-and-client-capabilities-field.patch
-
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
-
 %if 0%{?rhel}
 ExclusiveArch:  x86_64
 %else
-ExclusiveArch:  i686 x86_64
+ExclusiveArch:  i686 x86_64 armv6l armv7l armv7hl
 %endif
 
 BuildRequires:  pkgconfig
-BuildRequires:  spice-protocol >= 0.12.1
+BuildRequires:  spice-protocol >= 0.12.2
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 %if %{build_client}
 BuildRequires:  libXrandr-devel cegui06-devel
 %endif
 BuildRequires:  libcacard-devel cyrus-sasl-devel
-BuildRequires:  autoconf automake libtool pyparsing
+BuildRequires:  pyparsing
 
 %description
 The Simple Protocol for Independent Computing Environments (SPICE) is
@@ -63,6 +39,7 @@ a remote display system built for virtual environments which allows
 you to view a computing 'desktop' environment not only on the machine
 where it is running, but from anywhere on the Internet and from a wide
 variety of machine architectures.
+
 
 %if %{build_client}
 %package client
@@ -81,6 +58,7 @@ variety of machine architectures.
 This package contains the SPICE client application.
 %endif
 
+
 %package server
 Summary:        Implements the server side of the SPICE protocol
 Group:          System Environment/Libraries
@@ -95,6 +73,7 @@ variety of machine architectures.
 This package contains the run-time libraries for any application that wishes
 to be a SPICE server.
 
+
 %package server-devel
 Summary:        Header files, libraries and development documentation for spice-server
 Group:          Development/Libraries
@@ -106,16 +85,10 @@ This package contains the header files, static libraries and development
 documentation for spice-server. If you like to develop programs
 using spice-server, you will need to install spice-server-devel.
 
+
 %prep
 %setup -q
-%patch1 -p1 -b 0001-client-Advertise-A8_SURFACE-capability
-%patch2 -p1 -b 0002-Add-new-set_client_capabilities-interface-to-QXLInst
-%patch3 -p1 -b 0003-Process-outstanding-commands-in-the-ring-after-chang
-%patch4 -p1 -b 0004-Set-a8-capability-in-the-QXL-device-if-supported-by-
-%patch5 -p1 -b 0005-Bump-spice.h-version-number-to-0.11.4
 
-%patch6 -p1 -b 0001-Add-A8-surface-capability
-%patch7 -p1 -b 0002-Add-new-client_present-and-client-capabilities-field
 
 %build
 %if %{build_client}
@@ -123,10 +96,9 @@ using spice-server, you will need to install spice-server-devel.
 %else
 %define configure_client --disable-client
 %endif
-
-autoreconf -fi
 %configure --enable-smartcard %{configure_client}
-make WARN_CFLAGS='' %{?_smp_mflags}
+make %{?_smp_mflags} WARN_CFLAGS='' V=1
+
 
 %install
 make DESTDIR=%{buildroot} install
@@ -139,14 +111,12 @@ touch %{buildroot}%{_libexecdir}/spice-xpi-client
 install -m 0755 %{_sourcedir}/spice-xpi-client-spicec %{buildroot}%{_libexecdir}/
 %endif
 
+
+%post server -p /sbin/ldconfig
+
+%postun server -p /sbin/ldconfig
+
 %if %{build_client}
-%files client
-
-%doc COPYING README NEWS
-%{_bindir}/spicec
-%ghost %{_libexecdir}/spice-xpi-client
-%{_libexecdir}/spice-xpi-client-spicec
-
 %post client
 %{_sbindir}/update-alternatives --install %{_libexecdir}/spice-xpi-client \
   spice-xpi-client %{_libexecdir}/spice-xpi-client-spicec 10
@@ -157,21 +127,31 @@ if [ $1 -eq 0 ] ; then
 fi
 %endif
 
+
+%if %{build_client}
+%files client
+%doc COPYING README NEWS
+%{_bindir}/spicec
+%ghost %{_libexecdir}/spice-xpi-client
+%{_libexecdir}/spice-xpi-client-spicec
+%endif
+
 %files server
 %doc COPYING README NEWS
-%{_libdir}/libspice-server.so.1
-%{_libdir}/libspice-server.so.1.3.0
-
-%post server -p /sbin/ldconfig
-
-%postun server -p /sbin/ldconfig
+%{_libdir}/libspice-server.so.1*
 
 %files server-devel
 %{_includedir}/spice-server
 %{_libdir}/libspice-server.so
 %{_libdir}/pkgconfig/spice-server.pc
 
+
 %changelog
+* Fri Sep 28 2012 Hans de Goede <hdegoede@redhat.com> - 0.12.0-1
+- New upstream release 0.12.0
+- Some minor spec file cleanups
+- Enable building on arm
+
 * Thu Sep 6 2012 Soren Sandmann <ssp@redhat.com> - 0.11.3-1
 - BuildRequire pyparsing
 
