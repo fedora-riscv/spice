@@ -7,7 +7,7 @@
 %endif
 
 Name:           spice
-Version:        0.12.0
+Version:        0.12.2
 Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
@@ -24,7 +24,8 @@ ExclusiveArch:  i686 x86_64 armv6l armv7l armv7hl
 %endif
 
 BuildRequires:  pkgconfig
-BuildRequires:  spice-protocol >= 0.12.2
+BuildRequires:  glib2-devel >= 2.22
+BuildRequires:  spice-protocol >= 0.12.3
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 %if %{build_client}
@@ -147,6 +148,9 @@ fi
 
 
 %changelog
+* Thu Dec 20 2012 Hans de Goede <hdegoede@redhat.com> - 0.12.2-1
+- New upstream release 0.12.2
+
 * Fri Sep 28 2012 Hans de Goede <hdegoede@redhat.com> - 0.12.0-1
 - New upstream release 0.12.0
 - Some minor spec file cleanups
