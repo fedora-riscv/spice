@@ -8,7 +8,7 @@
 
 Name:           spice
 Version:        0.12.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -148,6 +148,9 @@ fi
 
 
 %changelog
+* Fri Dec 21 2012 Adam Tkac <atkac redhat com> - 0.12.2-2
+- rebuild against new libjpeg
+
 * Thu Dec 20 2012 Hans de Goede <hdegoede@redhat.com> - 0.12.2-1
 - New upstream release 0.12.2
 
