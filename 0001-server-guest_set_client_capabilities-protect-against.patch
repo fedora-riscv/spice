@@ -1,0 +1,36 @@
+From 1ff42341629948c591621f0a8ddf2859543ca05d Mon Sep 17 00:00:00 2001
+From: Uri Lublin <uril@redhat.com>
+Date: Mon, 17 Dec 2012 18:34:43 +0200
+Subject: [PATCH spice 1/6] server: guest_set_client_capabilities: protect
+ against NULL worker->display_channel
+
+Reported-by: Michal Luscon <mluscon@redhat.com>
+
+Found by a Coverity scan:
+  in handle_dev_start -
+    Checking "worker->display_channel" implies that "worker->display_channel"
+	         might be NULL.
+    Passing "worker" to function "guest_set_client_capabilities"
+  in guest_set_client_capabilities -
+    Directly dereferencing parameter "worker->display_channel"
+---
+ server/red_worker.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/server/red_worker.c b/server/red_worker.c
+index e5e3d05..1a9c375 100644
+--- a/server/red_worker.c
++++ b/server/red_worker.c
+@@ -10342,7 +10342,8 @@ static void guest_set_client_capabilities(RedWorker *worker)
+         worker->set_client_capabilities_pending = 1;
+         return;
+     }
+-    if (worker->display_channel->common.base.clients_num == 0) {
++    if ((worker->display_channel == NULL) ||
++        (worker->display_channel->common.base.clients_num == 0)) {
+         worker->qxl->st->qif->set_client_capabilities(worker->qxl, FALSE, caps);
+     } else {
+         // Take least common denominator
+-- 
+1.8.1
+

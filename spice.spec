@@ -8,13 +8,19 @@
 
 Name:           spice
 Version:        0.12.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
 Source1:        spice-xpi-client-spicec
+Patch1:         0001-server-guest_set_client_capabilities-protect-against.patch
+Patch2:         0002-red_worker.c-insert-a-drawable-to-its-position-in-th.patch
+Patch3:         0003-red_worker.c-clearing-the-stream-vis_region-after-it.patch
+Patch4:         0004-link-libspice-server-with-libm-libpthread.patch
+Patch5:         0005-server-Fix-SpiceWorker-CRITICAL-red_worker.c-10968-r.patch
+Patch6:         0006-worker_update_monitors_config-Drop-bogus-real_count-.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel}
@@ -89,6 +95,12 @@ using spice-server, you will need to install spice-server-devel.
 
 %prep
 %setup -q
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
 
 
 %build
@@ -148,6 +160,9 @@ fi
 
 
 %changelog
+* Mon Jan 21 2013 Hans de Goede <hdegoede@redhat.com> - 0.12.2-3
+- Add a number of misc. bug-fixes from upstream
+
 * Fri Dec 21 2012 Adam Tkac <atkac redhat com> - 0.12.2-2
 - rebuild against new libjpeg
 

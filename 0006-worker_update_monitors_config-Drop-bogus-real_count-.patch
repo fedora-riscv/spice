@@ -1,0 +1,56 @@
+From 50efe1e48d2fcf6a2f12c933ce29e73b6985f599 Mon Sep 17 00:00:00 2001
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Thu, 10 Jan 2013 23:30:34 +0100
+Subject: [PATCH spice 6/6] worker_update_monitors_config: Drop bogus
+ real_count accounting
+
+1) This does not buy us much, as red_marshall_monitors_config() also
+   removes 0x0 sized monitors and does a much better job at it
+   (also removing intermediate ones, not only tailing ones)
+2) The code is wrong, as it allocs space for real_count heads, where
+   real_count always <= monitors_config->count and then stores
+   monitors_config->count in worker->monitors_config->count, causing
+   red_marshall_monitors_config to potentially walk
+   worker->monitors_config->heads past its boundaries.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ server/red_worker.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
+
+diff --git a/server/red_worker.c b/server/red_worker.c
+index de070a6..11fa126 100644
+--- a/server/red_worker.c
++++ b/server/red_worker.c
+@@ -10951,7 +10951,6 @@ static void worker_update_monitors_config(RedWorker *worker,
+ {
+     int heads_size;
+     MonitorsConfig *monitors_config;
+-    int real_count = 0;
+     int i;
+ 
+     if (worker->monitors_config) {
+@@ -10968,19 +10967,7 @@ static void worker_update_monitors_config(RedWorker *worker,
+                     dev_monitors_config->heads[i].width,
+                     dev_monitors_config->heads[i].height);
+     }
+-
+-    // Ignore any empty sized monitors at the end of the config.
+-    // 4: {w1,h1},{w2,h2},{0,0},{0,0} -> 2: {w1,h1},{w2,h2}
+-    for (i = dev_monitors_config->count ; i > 0 ; --i) {
+-        if (dev_monitors_config->heads[i - 1].width > 0 &&
+-            dev_monitors_config->heads[i - 1].height > 0) {
+-            real_count = i;
+-            break;
+-        }
+-    }
+-    heads_size = real_count * sizeof(QXLHead);
+-    spice_debug("new working monitor config (count: %d, real: %d)",
+-                dev_monitors_config->count, real_count);
++    heads_size = dev_monitors_config->count * sizeof(QXLHead);
+     worker->monitors_config = monitors_config =
+         spice_malloc(sizeof(*monitors_config) + heads_size);
+     monitors_config->refs = 1;
+-- 
+1.8.1
+

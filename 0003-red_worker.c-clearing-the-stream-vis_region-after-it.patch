@@ -1,0 +1,39 @@
+From 4eb172f6fe9dffe2f3f3045189e84375e54c6cad Mon Sep 17 00:00:00 2001
+From: Yonit Halperin <yhalperi@redhat.com>
+Date: Tue, 8 Jan 2013 10:51:26 -0500
+Subject: [PATCH spice 3/6] red_worker.c: clearing the stream vis_region, after
+ it has been detached
+
+The stream vis_region should be cleared after the stream region was sent
+to the client losslessly. Otherwise, we might send redundant stream upgrades
+if we process more drawables that are dependent on the stream region.
+---
+ server/red_worker.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/server/red_worker.c b/server/red_worker.c
+index 5e00cb6..085e3e6 100644
+--- a/server/red_worker.c
++++ b/server/red_worker.c
+@@ -2646,7 +2646,7 @@ static inline void red_display_detach_stream_gracefully(DisplayChannelClient *dc
+             spice_debug("stream %d: upgrade by linked drawable. sized %d, box ==>",
+                         stream_id, stream->current->sized_stream != NULL);
+             rect_debug(&stream->current->red_drawable->bbox);
+-            return;
++            goto clear_vis_region;
+         }
+         spice_debug("stream %d: upgrade by drawable. sized %d, box ==>",
+                     stream_id, stream->current->sized_stream != NULL);
+@@ -2680,7 +2680,8 @@ static inline void red_display_detach_stream_gracefully(DisplayChannelClient *dc
+         }
+         red_add_surface_area_image(dcc, 0, &upgrade_area, NULL, FALSE);
+     }
+-
++clear_vis_region:
++    region_clear(&agent->vis_region);
+ }
+ 
+ static inline void red_detach_stream_gracefully(RedWorker *worker, Stream *stream,
+-- 
+1.8.1
+

@@ -1,0 +1,77 @@
+From d2e1f939fec9b4d852a009cc55c4bbb3d2a94d3b Mon Sep 17 00:00:00 2001
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Thu, 10 Jan 2013 22:55:51 +0100
+Subject: [PATCH spice 5/6] server: Fix SpiceWorker-CRITICAL **:
+ red_worker.c:10968:red_push_monitors_config: condition `monitors_config !=
+ NULL' failed
+
+During my dynamic monitor support testing today, I hit the following assert
+in red_worker.c:
+"red_push_monitors_config: condition `monitors_config != NULL' failed"
+
+This is caused by the following scenario:
+1) Guest causes handle_dev_monitors_config_async() to be called
+2) handle_dev_monitors_config_async() calls worker_update_monitors_config()
+3) handle_dev_monitors_config_async() pushes worker->monitors_config, this
+   takes a ref on the current monitors_config
+4) Guest causes handle_dev_monitors_config_async() to be called *again*
+5) handle_dev_monitors_config_async() calls worker_update_monitors_config()
+6) worker_update_monitors_config() does a decref on worker->monitors_config,
+   releasing the workers reference, this monitor_config from step 2 is
+   not yet free-ed though as the pipe-item still holds a ref
+7) worker_update_monitors_config() creates a new monitors_config with an
+   initial ref-count of 1 and stores that in worker->monitors_config
+8) The pipe-item of the *first* monitors_config is send, upon completion
+   a decref is done on the monitors_config, and monitors_config_decref not
+   only frees the monitor_config, but *also* sets worker->monitors_config
+   to NULL, even though worker->monitors_config no longer refers to the
+   monitor_config being freed, it refers to the 2nd monitor_config!
+9) The client which was connected when this all happened disconnects
+10) A new client connects, leading to the assert:
+    at red_worker.c:9519
+    num_common_caps=1, common_caps=0x5555569b6f60, migrate=0,
+    stream=<optimized out>, client=<optimized out>, worker=<optimized out>)
+    at red_worker.c:10423
+    at red_worker.c:11301
+
+Note that red_worker.c:9519 is:
+        red_push_monitors_config(dcc);
+gdb does not point to the actual line of the assert because the function gets
+inlined.
+
+The fix is easy and obvious, don't set worker->monitors_config to NULL in
+monitors_config_decref. I'm a bit baffled as to why that code is there in
+the first place, the whole point of ref-counting is to not have one single
+unique place to store the reference...
+
+This fix should not have any adverse side-effects as the 4 callers of
+monitors_config_decref fall into 2 categories:
+1) Code which immediately after the decref replaces worker->monitors_config
+   with a new monitors_config:
+   worker_update_monitors_config()
+   set_monitors_config_to_primary()
+2) pipe-item freeing code, which should not touch the worker state at all
+   to being with
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ server/red_worker.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/server/red_worker.c b/server/red_worker.c
+index 085e3e6..de070a6 100644
+--- a/server/red_worker.c
++++ b/server/red_worker.c
+@@ -1239,8 +1239,7 @@ static void monitors_config_decref(MonitorsConfig *monitors_config)
+         return;
+     }
+ 
+-    spice_debug("removing worker monitors config");
+-    monitors_config->worker->monitors_config = NULL;
++    spice_debug("freeing monitors config");
+     free(monitors_config);
+ }
+ 
+-- 
+1.8.1
+
