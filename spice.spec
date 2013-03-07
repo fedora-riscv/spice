@@ -8,7 +8,7 @@
 
 Name:           spice
 Version:        0.12.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -160,6 +160,9 @@ fi
 
 
 %changelog
+* Thu Mar 07 2013 Adam Jackson <ajax@redhat.com> 0.12.2-4
+- Rebuild for new libsasl2 soname in F19
+
 * Mon Jan 21 2013 Hans de Goede <hdegoede@redhat.com> - 0.12.2-3
 - Add a number of misc. bug-fixes from upstream
 
