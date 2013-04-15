@@ -8,7 +8,7 @@
 
 Name:           spice
 Version:        0.12.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -21,6 +21,7 @@ Patch3:         0003-red_worker.c-clearing-the-stream-vis_region-after-it.patch
 Patch4:         0004-link-libspice-server-with-libm-libpthread.patch
 Patch5:         0005-server-Fix-SpiceWorker-CRITICAL-red_worker.c-10968-r.patch
 Patch6:         0006-worker_update_monitors_config-Drop-bogus-real_count-.patch
+Patch7:         0007-supply-missing-IS_IMAGE_TYPE_-elements-for-LZ_IMAGE_.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel}
@@ -101,6 +102,9 @@ using spice-server, you will need to install spice-server-devel.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+pushd spice-common
+%patch7 -p1
+popd
 
 
 %build
@@ -160,6 +164,9 @@ fi
 
 
 %changelog
+* Mon Apr 15 2013 Hans de Goede <hdegoede@redhat.com> - 0.12.2-4
+- Add fix from upstream for a crash when the guest uses RGBA (rhbz#952242)
+
 * Thu Mar 07 2013 Adam Jackson <ajax@redhat.com> 0.12.2-4
 - Rebuild for new libsasl2 soname in F19
 
