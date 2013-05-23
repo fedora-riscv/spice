@@ -1,20 +1,11 @@
-# build_client:
-# If you want to build both client and server change value to 1
-# If you want to only build the server change value to 0
-%define build_client        1
-%if 0%{?rhel}
-%define build_client        0
-%endif
-
 Name:           spice
 Version:        0.12.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
-Source1:        spice-xpi-client-spicec
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel}
@@ -28,9 +19,6 @@ BuildRequires:  glib2-devel >= 2.22
 BuildRequires:  spice-protocol >= 0.12.3
 BuildRequires:  celt051-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
-%if %{build_client}
-BuildRequires:  libXrandr-devel cegui06-devel
-%endif
 BuildRequires:  libcacard-devel cyrus-sasl-devel
 BuildRequires:  pyparsing
 
@@ -40,24 +28,6 @@ a remote display system built for virtual environments which allows
 you to view a computing 'desktop' environment not only on the machine
 where it is running, but from anywhere on the Internet and from a wide
 variety of machine architectures.
-
-
-%if %{build_client}
-%package client
-Summary:          Implements the client side of the SPICE protocol
-Group:            User Interface/Desktops
-Requires(post):   %{_sbindir}/update-alternatives
-Requires(postun): %{_sbindir}/update-alternatives
-
-%description client
-The Simple Protocol for Independent Computing Environments (SPICE) is
-a remote display system built for virtual environments which allows
-you to view a computing 'desktop' environment not only on the machine
-where it is running, but from anywhere on the Internet and from a wide
-variety of machine architectures.
-
-This package contains the SPICE client application.
-%endif
 
 
 %package server
@@ -92,11 +62,7 @@ using spice-server, you will need to install spice-server-devel.
 
 
 %build
-%if %{build_client}
-%define configure_client --enable-client --enable-gui
-%else
 %define configure_client --disable-client
-%endif
 %configure --enable-smartcard %{configure_client}
 make %{?_smp_mflags} WARN_CFLAGS='' V=1
 
@@ -107,39 +73,17 @@ rm -f %{buildroot}%{_libdir}/libspice-server.a
 rm -f %{buildroot}%{_libdir}/libspice-server.la
 mkdir -p %{buildroot}%{_libexecdir}
 
-%if %{build_client}
-touch %{buildroot}%{_libexecdir}/spice-xpi-client
-install -m 0755 %{_sourcedir}/spice-xpi-client-spicec %{buildroot}%{_libexecdir}/
-%endif
-
 
 %post server -p /sbin/ldconfig
 
+
 %postun server -p /sbin/ldconfig
 
-%if %{build_client}
-%post client
-%{_sbindir}/update-alternatives --install %{_libexecdir}/spice-xpi-client \
-  spice-xpi-client %{_libexecdir}/spice-xpi-client-spicec 10
-
-%postun client
-if [ $1 -eq 0 ] ; then
-  %{_sbindir}/update-alternatives --remove spice-xpi-client %{_libexecdir}/spice-xpi-client-spicec
-fi
-%endif
-
-
-%if %{build_client}
-%files client
-%doc COPYING README NEWS
-%{_bindir}/spicec
-%ghost %{_libexecdir}/spice-xpi-client
-%{_libexecdir}/spice-xpi-client-spicec
-%endif
 
 %files server
 %doc COPYING README NEWS
 %{_libdir}/libspice-server.so.1*
+
 
 %files server-devel
 %{_includedir}/spice-server
@@ -148,6 +92,10 @@ fi
 
 
 %changelog
+* Thu May 23 2013 Christophe Fergeau <cfergeau@redhat.com> 0.12.3-2
+- Stop building spicec, it's obsolete and superseded by remote-viewer
+  (part of virt-viewer)
+
 * Tue May 21 2013 Christophe Fergeau <cfergeau@redhat.com> 0.12.3-1
 - New upstream release 0.12.3
 - Drop all patches (they were all upstreamed)
