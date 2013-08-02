@@ -1,0 +1,56 @@
+From 46c2ce8f1af0170a2c6a335cc743a3ddff2d96d0 Mon Sep 17 00:00:00 2001
+From: Yonit Halperin <yhalperi@redhat.com>
+Date: Thu, 25 Jul 2013 14:25:24 -0400
+Subject: [PATCH 5/8] reds: s/red_client_disconnect/red_channel_client_shutdown
+ inside callbacks
+
+When we want to disconnect the main channel from a callback, it is
+safer to use red_channel_client_shutdown, instead of directly
+destroying the client. It is also more consistent with how other
+channels treat errors.
+red_channel_client_shutdown will trigger socket error in the main channel.
+Then, main_channel_client_on_disconnect will be called,
+and eventually, main_dispatcher_client_disconnect.
+
+I didn't replace calls to reds_disconnect/reds_client_disconnect in
+places where those calls were safe && that might need immediate client
+disconnection.
+---
+ server/reds.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/server/reds.c b/server/reds.c
+index c66ddc4..ae87c90 100644
+--- a/server/reds.c
++++ b/server/reds.c
+@@ -879,7 +879,8 @@ static void vdi_port_on_free_self_token(void *opaque)
+ 
+ static void vdi_port_remove_client(RedClient *client, void *opaque)
+ {
+-    reds_client_disconnect(client);
++    red_channel_client_shutdown(main_channel_client_get_base(
++                                    red_client_get_main(client)));
+ }
+ 
+ /****************************************************************************/
+@@ -1009,7 +1010,7 @@ void reds_on_main_agent_start(MainChannelClient *mcc, uint32_t num_tokens)
+ 
+         if (!client_added) {
+             spice_warning("failed to add client to agent");
+-            reds_client_disconnect(rcc->client);
++            red_channel_client_shutdown(rcc);
+             return;
+         }
+     } else {
+@@ -1126,7 +1127,7 @@ void reds_on_main_agent_data(MainChannelClient *mcc, void *message, size_t size)
+         reds_on_main_agent_monitors_config(mcc, message, size);
+         return;
+     case AGENT_MSG_FILTER_PROTO_ERROR:
+-        reds_disconnect();
++        red_channel_client_shutdown(main_channel_client_get_base(mcc));
+         return;
+     }
+ 
+-- 
+1.8.3.1
+

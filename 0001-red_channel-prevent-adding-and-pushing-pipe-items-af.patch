@@ -1,0 +1,96 @@
+From 47e722b85ccd0b6876ca189a3d6f6f05289fe3c3 Mon Sep 17 00:00:00 2001
+From: Yonit Halperin <yhalperi@redhat.com>
+Date: Wed, 24 Jul 2013 14:54:23 -0400
+Subject: [PATCH 1/8] red_channel: prevent adding and pushing pipe items after
+ a channel_client has diconnected
+
+Fixes: leaks of pipe items & "red_client_destroy: assertion `rcc->send_data.size == 0'"
+
+red_channel_disconnect clears the pipe. It is called only once. After,
+it was called, not items should be added to the pipe.
+
+An example of when this assert can occur:
+on_new_cursor_channel (red_worker.c), pushes 2 pipe items.
+When it pushes the first pipe item, if the client has disconnected,
+it can hit a socket error, and then, red_channel_client_disconnect is called.
+The second call to adding a pipe item, will add the item to
+the pipe. red_channel_client_pipe_add_type also calls
+red_channel_client_push, which will update the send_data.size.
+Then, the push will also hit a socket error, but red_channel_client_disconnect
+won't clear the pending pipe item again, since it was already called.
+When red_client_destory is called, we hit assertion `rcc->send_data.size
+== 0'.
+Note that if a pipe item is added to the pipe after
+red_channel_client_disconnect was called, but without pushing it,
+we should hit "spice_assert(rcc->pipe_size == 0)".
+---
+ server/red_channel.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
+
+diff --git a/server/red_channel.c b/server/red_channel.c
+index 33af388..0d74413 100644
+--- a/server/red_channel.c
++++ b/server/red_channel.c
+@@ -1527,9 +1527,23 @@ void red_channel_pipe_item_init(RedChannel *channel, PipeItem *item, int type)
+     item->type = type;
+ }
+ 
+-void red_channel_client_pipe_add(RedChannelClient *rcc, PipeItem *item)
++static inline int validate_pipe_add(RedChannelClient *rcc, PipeItem *item)
+ {
+     spice_assert(rcc && item);
++    if (SPICE_UNLIKELY(!red_channel_client_is_connected(rcc))) {
++        spice_debug("rcc is disconnected %p", rcc);
++        red_channel_client_release_item(rcc, item, FALSE);
++        return FALSE;
++    }
++    return TRUE;
++}
++
++void red_channel_client_pipe_add(RedChannelClient *rcc, PipeItem *item)
++{
++
++    if (!validate_pipe_add(rcc, item)) {
++        return;
++    }
+     rcc->pipe_size++;
+     ring_add(&rcc->pipe, &item->link);
+ }
+@@ -1543,10 +1557,10 @@ void red_channel_client_pipe_add_push(RedChannelClient *rcc, PipeItem *item)
+ void red_channel_client_pipe_add_after(RedChannelClient *rcc,
+                                        PipeItem *item, PipeItem *pos)
+ {
+-    spice_assert(rcc);
+     spice_assert(pos);
+-    spice_assert(item);
+-
++    if (!validate_pipe_add(rcc, item)) {
++        return;
++    }
+     rcc->pipe_size++;
+     ring_add_after(&item->link, &pos->link);
+ }
+@@ -1560,14 +1574,18 @@ int red_channel_client_pipe_item_is_linked(RedChannelClient *rcc,
+ void red_channel_client_pipe_add_tail_no_push(RedChannelClient *rcc,
+                                               PipeItem *item)
+ {
+-    spice_assert(rcc);
++    if (!validate_pipe_add(rcc, item)) {
++        return;
++    }
+     rcc->pipe_size++;
+     ring_add_before(&item->link, &rcc->pipe);
+ }
+ 
+ void red_channel_client_pipe_add_tail(RedChannelClient *rcc, PipeItem *item)
+ {
+-    spice_assert(rcc);
++    if (!validate_pipe_add(rcc, item)) {
++        return;
++    }
+     rcc->pipe_size++;
+     ring_add_before(&item->link, &rcc->pipe);
+     red_channel_client_push(rcc);
+-- 
+1.8.3.1
+

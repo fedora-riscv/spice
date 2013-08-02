@@ -1,11 +1,19 @@
 Name:           spice
-Version:        0.12.3
-Release:        2%{?dist}
+Version:        0.12.4
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
+Patch1:         0001-red_channel-prevent-adding-and-pushing-pipe-items-af.patch
+Patch2:         0002-red_channel-add-ref-count-to-RedClient.patch
+Patch3:         0003-main_dispatcher-add-ref-count-protection-to-RedClien.patch
+Patch4:         0004-decouple-disconnection-of-the-main-channel-from-clie.patch
+Patch5:         0005-reds-s-red_client_disconnect-red_channel_client_shut.patch
+Patch6:         0006-snd_worker-fix-memory-leak-of-PlaybackChannel.patch
+Patch7:         0007-snd_worker-snd_disconnect_channel-don-t-call-snd_cha.patch
+Patch8:         0008-log-improve-debug-information-related-to-client-disc.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel}
@@ -33,6 +41,7 @@ variety of machine architectures.
 %package server
 Summary:        Implements the server side of the SPICE protocol
 Group:          System Environment/Libraries
+Obsoletes:      spice-client < %{version}-%{release}
 
 %description server
 The Simple Protocol for Independent Computing Environments (SPICE) is
@@ -48,7 +57,7 @@ to be a SPICE server.
 %package server-devel
 Summary:        Header files, libraries and development documentation for spice-server
 Group:          Development/Libraries
-Requires:       %{name}-server = %{version}-%{release}
+Requires:       %{name}-server%{?_isa} = %{version}-%{release}
 Requires:       pkgconfig
 
 %description server-devel
@@ -59,6 +68,14 @@ using spice-server, you will need to install spice-server-devel.
 
 %prep
 %setup -q
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
 
 
 %build
@@ -75,15 +92,12 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %post server -p /sbin/ldconfig
-
-
 %postun server -p /sbin/ldconfig
 
 
 %files server
 %doc COPYING README NEWS
 %{_libdir}/libspice-server.so.1*
-
 
 %files server-devel
 %{_includedir}/spice-server
@@ -92,6 +106,11 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Fri Aug  2 2013 Hans de Goede <hdegoede@redhat.com> - 0.12.4-1
+- New upstream bug-fix release 0.12.4
+- Add patches from upstream git to fix sound-channel-free crash (rhbz#986407)
+- Add Obsoletes for dropped spice-client sub-package
+
 * Thu May 23 2013 Christophe Fergeau <cfergeau@redhat.com> 0.12.3-2
 - Stop building spicec, it's obsolete and superseded by remote-viewer
   (part of virt-viewer)

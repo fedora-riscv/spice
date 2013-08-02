@@ -1,0 +1,42 @@
+From 134b7f310de5120b233670d18641d32204f31318 Mon Sep 17 00:00:00 2001
+From: Yonit Halperin <yhalperi@redhat.com>
+Date: Thu, 25 Jul 2013 14:49:33 -0400
+Subject: [PATCH 6/8] snd_worker: fix memory leak of PlaybackChannel
+
+When the sequence of calls bellow occurs, the PlaybackChannel
+is not released (snd_channel_put is not called for the
+samples that refer to the channel).
+
+    spice_server_playback_get_buffer
+    snd_channel_disconnect
+    spice_server_playback_put_samples
+---
+ server/snd_worker.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/server/snd_worker.c b/server/snd_worker.c
+index d6ec47a..849f002 100644
+--- a/server/snd_worker.c
++++ b/server/snd_worker.c
+@@ -1097,14 +1097,13 @@ SPICE_GNUC_VISIBLE void spice_server_playback_put_samples(SpicePlaybackInstance
+     PlaybackChannel *playback_channel;
+     AudioFrame *frame;
+ 
+-    if (!sin->st->worker.connection) {
+-        return;
+-    }
+-
+     frame = SPICE_CONTAINEROF(samples, AudioFrame, samples);
+     playback_channel = frame->channel;
+-    if (!snd_channel_put(&playback_channel->base) || !playback_channel->base.worker->connection) {
++    spice_assert(playback_channel);
++    if (!snd_channel_put(&playback_channel->base) ||
++        sin->st->worker.connection != &playback_channel->base) {
+         /* lost last reference, channel has been destroyed previously */
++        spice_info("audio samples belong to a disconnected channel");
+         return;
+     }
+     spice_assert(playback_channel->base.active);
+-- 
+1.8.3.1
+
