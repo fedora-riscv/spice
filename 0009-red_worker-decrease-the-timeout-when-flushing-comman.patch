@@ -1,0 +1,66 @@
+From 6ced0f698507de02a67cfcd25b7ab07e8c423fad Mon Sep 17 00:00:00 2001
+Message-Id: <6ced0f698507de02a67cfcd25b7ab07e8c423fad.1377595745.git.uril@redhat.com>
+From: Yonit Halperin <yhalperi@redhat.com>
+Date: Mon, 5 Aug 2013 12:10:15 -0400
+Subject: [PATCH] red_worker: decrease the timeout when flushing commands and waiting for the client.
+
+150 seconds is way too long period for holding the guest driver and
+waiting for a response for the client. This timeout was 15 seconds, but
+when off-screen surfaces ware introduced it was arbitrarily multiplied by
+10.
+Other existing related bugs emphasize why it is important to decrease
+the timeout:
+(1) 994211 - the qxl driver waits for an async-io reponse for 60 seconds
+    and after that, it switches to sync-io mode. Not only that the
+    driver might use invalid data (since it didn't wait for the query to
+    complete), falling back to sync-io mode introduces other errors.
+(2) 994175 - spice server sometimes doesn't recognize that the client
+             has disconnected.
+(3) There might be cache inconsistency between the client and the server,
+and then the display channel waits indefinitely for a cache item (e.g., bug
+977998)
+
+This patch changes the timeout to 30 seconds. I tested it under wifi +emulating 2.5Mbps network,
+together with playing video on the guest and changing resolutions in a loop. The timeout didn't expired
+during my tests.
+
+This bug is related to rhbz#964136 (but from rhbz#964136 info it is still not
+clear why the client wasn't responsive).
+---
+ server/red_worker.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/server/red_worker.c b/server/red_worker.c
+index b45208b..9896696 100644
+--- a/server/red_worker.c
++++ b/server/red_worker.c
+@@ -103,7 +103,7 @@
+ #define CHANNEL_PUSH_TIMEOUT 30000000000ULL //nano
+ #define CHANNEL_PUSH_SLEEP_DURATION 10000 //micro
+ 
+-#define DISPLAY_CLIENT_TIMEOUT 15000000000ULL //nano
++#define DISPLAY_CLIENT_TIMEOUT 30000000000ULL //nano
+ #define DISPLAY_CLIENT_MIGRATE_DATA_TIMEOUT 10000000000ULL //nano, 10 sec
+ #define DISPLAY_CLIENT_RETRY_INTERVAL 10000 //micro
+ 
+@@ -9716,7 +9716,7 @@ static inline void flush_display_commands(RedWorker *worker)
+         if (ring_is_empty) {
+             break;
+         }
+-        end_time = red_now() + DISPLAY_CLIENT_TIMEOUT * 10;
++        end_time = red_now() + DISPLAY_CLIENT_TIMEOUT;
+         int sleep_count = 0;
+         for (;;) {
+             red_channel_push(&worker->display_channel->common.base);
+@@ -9760,7 +9760,7 @@ static inline void flush_cursor_commands(RedWorker *worker)
+         if (ring_is_empty) {
+             break;
+         }
+-        end_time = red_now() + DISPLAY_CLIENT_TIMEOUT * 10;
++        end_time = red_now() + DISPLAY_CLIENT_TIMEOUT;
+         int sleep_count = 0;
+         for (;;) {
+             red_channel_push(&worker->cursor_channel->common.base);
+-- 
+1.7.1
+

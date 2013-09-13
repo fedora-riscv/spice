@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.12.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -14,6 +14,7 @@ Patch5:         0005-reds-s-red_client_disconnect-red_channel_client_shut.patch
 Patch6:         0006-snd_worker-fix-memory-leak-of-PlaybackChannel.patch
 Patch7:         0007-snd_worker-snd_disconnect_channel-don-t-call-snd_cha.patch
 Patch8:         0008-log-improve-debug-information-related-to-client-disc.patch
+Patch9:         0009-red_worker-decrease-the-timeout-when-flushing-comman.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel}
@@ -76,6 +77,7 @@ using spice-server, you will need to install spice-server-devel.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 
 %build
@@ -106,6 +108,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Fri Sep 13 2013 Christophe Fergeau <cfergeau@redhat.com> 0.12.4-2
+- Add upstream patch fixing rhbz#995041
+
 * Fri Aug  2 2013 Hans de Goede <hdegoede@redhat.com> - 0.12.4-1
 - New upstream bug-fix release 0.12.4
 - Add patches from upstream git to fix sound-channel-free crash (rhbz#986407)
