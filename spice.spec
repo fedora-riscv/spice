@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.12.4
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -15,6 +15,7 @@ Patch6:         0006-snd_worker-fix-memory-leak-of-PlaybackChannel.patch
 Patch7:         0007-snd_worker-snd_disconnect_channel-don-t-call-snd_cha.patch
 Patch8:         0008-log-improve-debug-information-related-to-client-disc.patch
 Patch9:         0009-red_worker-decrease-the-timeout-when-flushing-comman.patch
+Patch10:        0010-Fix-buffer-overflow-when-decrypting-client-SPICE-tic.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel}
@@ -78,6 +79,7 @@ using spice-server, you will need to install spice-server-devel.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 
 %build
@@ -108,6 +110,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Wed Oct 30 2013 Christophe Fergeau <cfergeau@redhat.com> 0.12.4-3
+- Add patch fixing CVE-2013-4282
+
 * Fri Sep 13 2013 Christophe Fergeau <cfergeau@redhat.com> 0.12.4-2
 - Add upstream patch fixing rhbz#995041
 
