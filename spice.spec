@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.12.5
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -18,6 +18,7 @@ BuildRequires:  pkgconfig
 BuildRequires:  glib2-devel >= 2.22
 BuildRequires:  spice-protocol >= 0.12.3
 BuildRequires:  celt051-devel
+BuildRequires:  opus-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 BuildRequires:  libcacard-devel cyrus-sasl-devel
 BuildRequires:  pyparsing
@@ -90,6 +91,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Mon May 19 2014 Christophe Fergeau <cfergeau@redhat.com> 0.12.5-2
+- Add missing BuildRequires in order to enable Opus support
+
 * Mon May 19 2014 Christophe Fergeau <cfergeau@redhat.com> 0.12.5-1
 - Update to new 0.12.5 release
 
