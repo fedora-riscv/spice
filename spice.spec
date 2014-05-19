@@ -1,21 +1,11 @@
 Name:           spice
-Version:        0.12.4
-Release:        3%{?dist}
+Version:        0.12.5
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
-Patch1:         0001-red_channel-prevent-adding-and-pushing-pipe-items-af.patch
-Patch2:         0002-red_channel-add-ref-count-to-RedClient.patch
-Patch3:         0003-main_dispatcher-add-ref-count-protection-to-RedClien.patch
-Patch4:         0004-decouple-disconnection-of-the-main-channel-from-clie.patch
-Patch5:         0005-reds-s-red_client_disconnect-red_channel_client_shut.patch
-Patch6:         0006-snd_worker-fix-memory-leak-of-PlaybackChannel.patch
-Patch7:         0007-snd_worker-snd_disconnect_channel-don-t-call-snd_cha.patch
-Patch8:         0008-log-improve-debug-information-related-to-client-disc.patch
-Patch9:         0009-red_worker-decrease-the-timeout-when-flushing-comman.patch
-Patch10:        0010-Fix-buffer-overflow-when-decrypting-client-SPICE-tic.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel}
@@ -110,6 +100,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Mon May 19 2014 Christophe Fergeau <cfergeau@redhat.com> 0.12.5-1
+- Update to new 0.12.5 release
+
 * Wed Oct 30 2013 Christophe Fergeau <cfergeau@redhat.com> 0.12.4-3
 - Add patch fixing CVE-2013-4282
 
