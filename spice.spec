@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.12.5
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -91,6 +91,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Sun Jun 08 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.12.5-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Mon May 19 2014 Christophe Fergeau <cfergeau@redhat.com> 0.12.5-2
 - Add missing BuildRequires in order to enable Opus support
 
