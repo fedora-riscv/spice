@@ -172,7 +172,6 @@ mkdir -p %{buildroot}%{_libexecdir}
 * Sun May 13 2012 Alon Levy <alevy@redhat.com>
 - Add double free fix. (#808936)
 
-%changelog
 * Tue Apr 24 2012 Alon Levy <alevy@redhat.com>
 - Add 32 bit fixes from git master. (#815717)
 
