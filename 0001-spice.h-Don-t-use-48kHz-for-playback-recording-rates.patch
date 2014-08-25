@@ -1,0 +1,56 @@
+From 288cf77f804187a3e77ae2a5a21d108d101d22ce Mon Sep 17 00:00:00 2001
+From: Christophe Fergeau <cfergeau@redhat.com>
+Date: Tue, 19 Aug 2014 11:09:05 +0200
+Subject: [PATCH] spice.h: Don't use 48kHz for playback/recording rates
+
+When adding Opus support, SPICE_INTERFACE_PLAYBACK_FREQ and
+SPICE_INTERFACE_RECORD_FREQ in the public header 'spice.h' were changed
+from 44100 to 48000.
+However, this was not really useful as these constants are not used in
+spice-server, but only by users of spice-server (ie QEMU).
+It turns out changing these values is actually harmful. QEMU uses these
+constants in 2 situations:
+1. when it's a version of QEMU with this commit, but we are compiling
+   against older spice-server headers (before Opus support was added)
+2. when it's a version of QEMU without commit 795ca114d35 which added
+   what is needed for Opus support
+
+When we are in the second situation, having 48000 in the public header
+will actually cause issues as spice-server will know QEMU does not
+support Opus, so internally spice-server will be using a 44100 rate for
+audio. However, QEMU will be using SPICE_INTERFACE_.*_FREQ and think it
+should use a 48000 rate, which will cause distorsions as experienced in
+bug https://bugzilla.redhat.com/show_bug.cgi?id=1129961
+
+Reverting these constants back to 44100 will fix audio in the 'new
+spice-server/old QEMU' scenario, and won't cause issues either when both
+support Opus as in this case these constants are not used.
+---
+ server/spice.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/server/spice.h b/server/spice.h
+index c648a1d..58700d1 100644
+--- a/server/spice.h
++++ b/server/spice.h
+@@ -342,7 +342,7 @@ enum {
+     SPICE_INTERFACE_AUDIO_FMT_S16 = 1,
+ };
+ 
+-#define SPICE_INTERFACE_PLAYBACK_FREQ  48000
++#define SPICE_INTERFACE_PLAYBACK_FREQ  44100
+ #define SPICE_INTERFACE_PLAYBACK_CHAN  2
+ #define SPICE_INTERFACE_PLAYBACK_FMT   SPICE_INTERFACE_AUDIO_FMT_S16
+ 
+@@ -372,7 +372,7 @@ typedef struct SpiceRecordInterface SpiceRecordInterface;
+ typedef struct SpiceRecordInstance SpiceRecordInstance;
+ typedef struct SpiceRecordState SpiceRecordState;
+ 
+-#define SPICE_INTERFACE_RECORD_FREQ  48000
++#define SPICE_INTERFACE_RECORD_FREQ  44100
+ #define SPICE_INTERFACE_RECORD_CHAN  2
+ #define SPICE_INTERFACE_RECORD_FMT   SPICE_INTERFACE_AUDIO_FMT_S16
+ 
+-- 
+1.9.3
+

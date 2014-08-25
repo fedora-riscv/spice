@@ -1,11 +1,12 @@
 Name:           spice
 Version:        0.12.5
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
+Patch0:         0001-spice.h-Don-t-use-48kHz-for-playback-recording-rates.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel}
@@ -61,6 +62,7 @@ using spice-server, you will need to install spice-server-devel.
 
 %prep
 %setup -q
+%patch0 -p1
 
 
 %build
@@ -91,6 +93,10 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Mon Aug 25 2014 Christophe Fergeau <cfergeau@redhat.com> 0.12.5-5
+- Fix advertised sound playback/recording rates in public headers
+  Resolves: rhbz#1129961 (QEMU would need a rebuild though)
+
 * Mon Aug 18 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.12.5-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
