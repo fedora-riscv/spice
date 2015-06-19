@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.12.5
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -93,6 +93,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.12.5-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Mon Aug 25 2014 Christophe Fergeau <cfergeau@redhat.com> 0.12.5-5
 - Fix advertised sound playback/recording rates in public headers
   Resolves: rhbz#1129961 (QEMU would need a rebuild though)
