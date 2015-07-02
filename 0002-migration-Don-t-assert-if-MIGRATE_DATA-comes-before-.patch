@@ -1,0 +1,165 @@
+From 2d1c00a659cd1b3998f5d1f90fc5ee6abb7519bb Mon Sep 17 00:00:00 2001
+From: Uri Lublin <uril@redhat.com>
+Date: Wed, 16 Jul 2014 17:02:04 +0300
+Subject: [PATCH] migration: Don't assert() if MIGRATE_DATA comes before
+ attaching the agent
+
+During seamless migration, after switching host, if a client was connected
+during the migration, it will have data to send back to the new
+qemu/spice-server instance. This is handled through MIGRATE_DATA messages.
+SPICE char devices use such MIGRATE_DATA messages to restore their state.
+
+However, the MIGRATE_DATA message can arrive any time after the new qemu
+instance has started, this can happen before or after the SPICE char
+devices have been created. In order to handle this, if the migrate data
+arrives early, it's stored in reds->agent_state.mig_data, and
+attach_to_red_agent() will restore the agent state as appropriate.
+
+Unfortunately this does not work as expected, for main
+channel (agent messages).
+If attach_to_red_agent() is called before the MIGRATE_DATA
+message reaches the server, all goes well,
+but if MIGRATE_DATA reaches the server before
+attach_to_red_agent() gets called, then some assert() gets
+triggered in spice_char_device_state_restore():
+
+((null):32507): Spice-ERROR **: char_device.c:937:spice_char_device_state_restore: assertion `dev->num_clients == 1 && dev->wait_for_migrate_data' failed
+Thread 3 (Thread 0x7f406b543700 (LWP 32543)):
+Thread 2 (Thread 0x7f40697ff700 (LWP 32586)):
+Thread 1 (Thread 0x7f4079b45a40 (LWP 32507)):
+
+When restoring state, a client must already be added to the
+spice-char-device.
+What happens is that a client is not being added to the char-device
+when when MIGRATE_DATA arrives first, which leaves both
+dev->num_clients and dev->wait_for_migrate_data value at 0.
+
+This commit changes the logic in spice_server_char_device_add_interface(),
+such that if there is migrate data pending in reds->agent_state.mig_data
+but no client was added to the spice-char-device yet,
+then first the client is added to the device by calling
+spice_char_device_client_add(), and only then the state is restored.
+
+=== How to Reproduce
+To reproduce, add delays to the migration connection between
+qmeu-kvm on the source host (SRC) and on the destination (DST).
+
+Specifically I added a man in the middle DLY host between
+migration ports from SRC to DST.
+
++-----+    +-----+     +-----+
+| SRC |--> | DLY | --> | DST |
++-----+    +-----+     +-----+
+
+DLY listens on port P1 (e.g. 4444) and DST listens on port
+PINCOMING (e.g. 4444, from qemu-kvm '-incoming' command line option)
+
+Precondition: make sure port P1 on DLY is accessible in iptables.
+Option 1: use ssh tcp port forwarding
+On DLY host run ssh:
+  ssh DLY:P1:DST:PINCOMING DST
+Then use the following migration command (on qemu-kvm monitor):
+  client_migrate_info spice DST PSPICE
+  migrate -d tcp:DLY:P1
+
+Option 2: Use a simple proxy program that forwards
+packets from SRC to DST while adding some delays.
+The program runs on DLY, listens to port D1, upon
+accept connects to DST:PINCOMING and forward all
+packets from DLY:D1 to DST:PINCOMING.
+Then use the same migrate command as in option 1:
+  client_migrate_info spice DST PSPICE
+  migrate -d tcp:DLY:P1
+
+=== How to Reproduce Ends
+
+This fixes https://bugzilla.redhat.com/show_bug.cgi?id=1035184
+
+Based-on-a-patch-by: Christophe Fergeau <cfergeau@redhat.com>
+---
+ server/reds.c | 39 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 28 insertions(+), 11 deletions(-)
+
+diff --git a/server/reds.c b/server/reds.c
+index 6864d36..ef7ff62 100644
+--- a/server/reds.c
++++ b/server/reds.c
+@@ -1274,6 +1274,7 @@ int reds_handle_migrate_data(MainChannelClient *mcc, SpiceMigrateDataMain *mig_d
+ {
+     VDIPortState *agent_state = &reds->agent_state;
+ 
++    spice_debug("main-channel: got migrate data");
+     /*
+      * Now that the client has switched to the target server, if main_channel
+      * controls the mm-time, we update the client's mm-time.
+@@ -1295,15 +1296,18 @@ int reds_handle_migrate_data(MainChannelClient *mcc, SpiceMigrateDataMain *mig_d
+                     main_channel_push_agent_disconnected(reds->main_channel);
+                     main_channel_push_agent_connected(reds->main_channel);
+                 } else {
++                    spice_debug("restoring state from mig_data");
+                     return reds_agent_state_restore(mig_data);
+                 }
+             }
+         } else {
+             /* restore agent starte when the agent gets attached */
++            spice_debug("saving mig_data");
+             spice_assert(agent_state->plug_generation == 0);
+             agent_state->mig_data = spice_memdup(mig_data, size);
+         }
+     } else {
++        spice_debug("agent was not attached on the source host");
+         if (vdagent) {
+             /* spice_char_device_client_remove disables waiting for migration data */
+             spice_char_device_client_remove(agent_state->base,
+@@ -2853,17 +2857,15 @@ static SpiceCharDeviceState *attach_to_red_agent(SpiceCharDeviceInstance *sin)
+     state->read_filter.discard_all = FALSE;
+     reds->agent_state.plug_generation++;
+ 
+-    if (reds->agent_state.mig_data) {
+-        spice_assert(reds->agent_state.plug_generation == 1);
+-        reds_agent_state_restore(reds->agent_state.mig_data);
+-        free(reds->agent_state.mig_data);
+-        reds->agent_state.mig_data = NULL;
+-    } else if (!red_channel_waits_for_migrate_data(&reds->main_channel->base)) {
+-        /* we will assoicate the client with the char device, upon reds_on_main_agent_start,
+-         * in response to MSGC_AGENT_START */
+-        main_channel_push_agent_connected(reds->main_channel);
+-    } else {
+-       spice_debug("waiting for migration data");
++    if (reds->agent_state.mig_data ||
++        red_channel_waits_for_migrate_data(&reds->main_channel->base)) {
++        /* Migration in progress (code is running on the destination host):
++         * 1.  Add the client to spice char device, if it was not already added.
++         * 2.a If this (qemu-kvm state load side of migration) happens first
++         *     then wait for spice migration data to arrive. Otherwise
++         * 2.b If this happens second ==> we already have spice migrate data
++         *     then restore state
++         */
+         if (!spice_char_device_client_exists(reds->agent_state.base, reds_get_client())) {
+             int client_added;
+ 
+@@ -2879,9 +2881,24 @@ static SpiceCharDeviceState *attach_to_red_agent(SpiceCharDeviceInstance *sin)
+                 spice_warning("failed to add client to agent");
+                 reds_disconnect();
+             }
++        }
+ 
++        if (reds->agent_state.mig_data) {
++            spice_debug("restoring state from stored migration data");
++            spice_assert(reds->agent_state.plug_generation == 1);
++            reds_agent_state_restore(reds->agent_state.mig_data);
++            free(reds->agent_state.mig_data);
++            reds->agent_state.mig_data = NULL;
+         }
++        else {
++            spice_debug("waiting for migration data");
++        }
++    } else {
++        /* we will associate the client with the char device, upon reds_on_main_agent_start,
++         * in response to MSGC_AGENT_START */
++        main_channel_push_agent_connected(reds->main_channel);
+     }
++
+     return state->base;
+ }
+ 

@@ -1,12 +1,13 @@
 Name:           spice
 Version:        0.12.5
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
 Patch0:         0001-spice.h-Don-t-use-48kHz-for-playback-recording-rates.patch
+Patch1:         0002-migration-Don-t-assert-if-MIGRATE_DATA-comes-before-.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel}
@@ -63,6 +64,7 @@ using spice-server, you will need to install spice-server-devel.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 
 %build
@@ -93,6 +95,10 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Thu Jul 02 2015 Christophe Fergeau <cfergeau@redhat.com> 0.12.5-7
+- Fix migration race condition which causes a crash when triggered
+  Resolves: rhbz#1238212
+
 * Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.12.5-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
