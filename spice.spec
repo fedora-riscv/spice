@@ -14,7 +14,7 @@ Patch2:         0003-Use-image-compress-constants-from-spice-protocol.patch
 %if 0%{?rhel}
 ExclusiveArch:  x86_64
 %else
-ExclusiveArch:  i686 x86_64 armv6l armv7l armv7hl
+ExclusiveArch:  i686 x86_64 armv6l armv7l armv7hl aarch64
 %endif
 
 BuildRequires:  pkgconfig
