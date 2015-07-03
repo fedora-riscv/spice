@@ -1,4 +1,4 @@
-From 288cf77f804187a3e77ae2a5a21d108d101d22ce Mon Sep 17 00:00:00 2001
+From a6e29ce42fff526ab59096634d721254d6bcfc16 Mon Sep 17 00:00:00 2001
 From: Christophe Fergeau <cfergeau@redhat.com>
 Date: Tue, 19 Aug 2014 11:09:05 +0200
 Subject: [PATCH] spice.h: Don't use 48kHz for playback/recording rates
@@ -51,6 +51,3 @@ index c648a1d..58700d1 100644
  #define SPICE_INTERFACE_RECORD_CHAN  2
  #define SPICE_INTERFACE_RECORD_FMT   SPICE_INTERFACE_AUDIO_FMT_S16
  
--- 
-1.9.3
-

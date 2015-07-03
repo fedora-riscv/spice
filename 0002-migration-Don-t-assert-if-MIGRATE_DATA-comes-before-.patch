@@ -1,4 +1,4 @@
-From 2d1c00a659cd1b3998f5d1f90fc5ee6abb7519bb Mon Sep 17 00:00:00 2001
+From d6381c21c7076d9adbaa10ee0ddf119691a864a1 Mon Sep 17 00:00:00 2001
 From: Uri Lublin <uril@redhat.com>
 Date: Wed, 16 Jul 2014 17:02:04 +0300
 Subject: [PATCH] migration: Don't assert() if MIGRATE_DATA comes before
@@ -81,7 +81,7 @@ Based-on-a-patch-by: Christophe Fergeau <cfergeau@redhat.com>
  1 file changed, 28 insertions(+), 11 deletions(-)
 
 diff --git a/server/reds.c b/server/reds.c
-index 6864d36..ef7ff62 100644
+index 2c437ac..ed142ec 100644
 --- a/server/reds.c
 +++ b/server/reds.c
 @@ -1274,6 +1274,7 @@ int reds_handle_migrate_data(MainChannelClient *mcc, SpiceMigrateDataMain *mig_d
@@ -111,7 +111,7 @@ index 6864d36..ef7ff62 100644
          if (vdagent) {
              /* spice_char_device_client_remove disables waiting for migration data */
              spice_char_device_client_remove(agent_state->base,
-@@ -2853,17 +2857,15 @@ static SpiceCharDeviceState *attach_to_red_agent(SpiceCharDeviceInstance *sin)
+@@ -2857,17 +2861,15 @@ static SpiceCharDeviceState *attach_to_red_agent(SpiceCharDeviceInstance *sin)
      state->read_filter.discard_all = FALSE;
      reds->agent_state.plug_generation++;
  
@@ -138,7 +138,7 @@ index 6864d36..ef7ff62 100644
          if (!spice_char_device_client_exists(reds->agent_state.base, reds_get_client())) {
              int client_added;
  
-@@ -2879,9 +2881,24 @@ static SpiceCharDeviceState *attach_to_red_agent(SpiceCharDeviceInstance *sin)
+@@ -2883,9 +2885,24 @@ static SpiceCharDeviceState *attach_to_red_agent(SpiceCharDeviceInstance *sin)
                  spice_warning("failed to add client to agent");
                  reds_disconnect();
              }
