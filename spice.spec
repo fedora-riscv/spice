@@ -22,6 +22,7 @@ BuildRequires:  opus-devel
 BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 BuildRequires:  libcacard-devel cyrus-sasl-devel
 BuildRequires:  pyparsing
+BuildRequires:  python-six
 
 %description
 The Simple Protocol for Independent Computing Environments (SPICE) is
