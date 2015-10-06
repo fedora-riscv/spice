@@ -1,13 +1,11 @@
 Name:           spice
-Version:        0.12.5
-Release:        9%{?dist}
+Version:        0.12.6
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
-Patch0:         0001-spice.h-Don-t-use-48kHz-for-playback-recording-rates.patch
-Patch1:         0002-migration-Don-t-assert-if-MIGRATE_DATA-comes-before-.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel}
@@ -63,8 +61,6 @@ using spice-server, you will need to install spice-server-devel.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
 
 
 %build
@@ -95,6 +91,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Tue Oct 06 2015 Christophe Fergeau <cfergeau@redhat.com> 0.12.6-1
+- Update to new 0.12.6 upstream release
+
 * Wed Jul 29 2015 Christophe Fergeau <cfergeau@redhat.com> 0.12.5-9
 - Drop patch added in previous build which is no longer needed with
   spice-protocol 0.12.9 (and actually is actually breaking QEMU compilation
