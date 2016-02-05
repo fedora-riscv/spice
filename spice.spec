@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.12.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -92,6 +92,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Fri Feb 05 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0.12.6-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Tue Oct 06 2015 Christophe Fergeau <cfergeau@redhat.com> 0.12.6-1
 - Update to new 0.12.6 upstream release
 
