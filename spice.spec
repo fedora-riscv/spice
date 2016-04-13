@@ -64,11 +64,8 @@ using spice-server, you will need to install spice-server-devel.
 
 
 %prep
+gpgv2 --quiet --keyring %{SOURCE2} %{SOURCE1} %{SOURCE0}
 %setup -q
-gpg --homedir . --no-permission-warning \
-    --no-default-keyring --keyring %{SOURCE2} \
-    --trusted-key A9D8C21429AC6C82 \
-    --verify %{SOURCE1}
 
 
 %build
