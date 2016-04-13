@@ -6,6 +6,8 @@ Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
+Source1:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2.sign
+Source2:        cfergeau-29AC6C82.keyring
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel}
@@ -23,6 +25,7 @@ BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
 BuildRequires:  libcacard-devel cyrus-sasl-devel
 BuildRequires:  pyparsing
 BuildRequires:  python-six
+BuildRequires:  gnupg2
 
 %description
 The Simple Protocol for Independent Computing Environments (SPICE) is
@@ -62,6 +65,10 @@ using spice-server, you will need to install spice-server-devel.
 
 %prep
 %setup -q
+gpg --homedir . --no-permission-warning \
+    --no-default-keyring --keyring %{SOURCE2} \
+    --trusted-key A9D8C21429AC6C82 \
+    --verify %{SOURCE1}
 
 
 %build
