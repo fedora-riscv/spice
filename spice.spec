@@ -13,7 +13,7 @@ Source2:        cfergeau-29AC6C82.keyring
 %if 0%{?rhel}
 ExclusiveArch:  x86_64
 %else
-ExclusiveArch:  i686 x86_64 armv6l armv7l armv7hl aarch64
+ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
 %endif
 
 BuildRequires:  pkgconfig
@@ -86,7 +86,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %files server
-%doc COPYING README NEWS
+%{!?_licensedir:%global license %%doc}
+%license COPYING
+%doc README NEWS
 %{_libdir}/libspice-server.so.1*
 
 %files server-devel
@@ -96,6 +98,10 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Tue Jun 14 2016 Peter Robinson <pbrobinson@fedoraproject.org> 0.13.1-2
+- Use %%license
+- Build on aarch64
+
 * Wed Apr 13 2016 Christophe Fergeau <cfergeau@redhat.com> 0.13.1-1
 - Update to 0.13.1 release. This is a development release, but by the
   time Fedora 25 gets released, a stable 0.14.0 should be released.
