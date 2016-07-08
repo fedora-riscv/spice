@@ -1,6 +1,6 @@
 Name:           spice
-Version:        0.13.1
-Release:        2%{?dist}
+Version:        0.13.2
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -98,6 +98,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Fri Aug 05 2016 Christophe Fergeau <cfergeau@redhat.com> - 0.13.2-1
+- Update to spice 0.13.2
+
 * Tue Jun 14 2016 Peter Robinson <pbrobinson@fedoraproject.org> 0.13.1-2
 - Use %%license
 - Build on aarch64
