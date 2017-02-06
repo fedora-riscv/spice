@@ -1,8 +1,8 @@
-From 1d3e26c0ee75712fa4bbbcfa09d8d5866b66c8af Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Frediano Ziglio <fziglio@redhat.com>
 Date: Tue, 29 Nov 2016 16:46:56 +0000
-Subject: [spice-server 3/3] main-channel: Prevent overflow reading messages
- from client
+Subject: [spice-server] main-channel: Prevent overflow reading messages from
+ client
 
 Caller is supposed the function return a buffer able to store
 size bytes.
@@ -27,6 +27,3 @@ index 24dd448..1124506 100644
      } else {
          return main_chan->recv_buf;
      }
--- 
-2.9.3
-
