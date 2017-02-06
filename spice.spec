@@ -29,6 +29,7 @@ BuildRequires:  libcacard-devel cyrus-sasl-devel
 BuildRequires:  pyparsing
 BuildRequires:  python-six
 BuildRequires:  gnupg2
+BuildRequires:  git-core
 
 %description
 The Simple Protocol for Independent Computing Environments (SPICE) is
