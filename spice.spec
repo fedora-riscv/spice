@@ -1,6 +1,6 @@
 Name:           spice
-Version:        0.13.3
-Release:        2%{?dist}
+Version:        0.13.90
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -8,9 +8,6 @@ URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
 Source1:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2.sign
 Source2:        cfergeau-29AC6C82.keyring
-Patch1: 0001-Prevent-possible-DoS-attempts-during-protocol-handsh.patch
-Patch2: 0002-Prevent-integer-overflows-in-capability-checks.patch
-Patch3: 0003-main-channel-Prevent-overflow-reading-messages-from-.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel}
@@ -102,6 +99,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Wed Jul 26 2017 Christophe Fergeau <cfergeau@redhat.com> 0.13.90-1
+- Update to latest upstream release (0.13.90)
+
 * Mon Feb 06 2017 Christophe Fergeau <cfergeau@redhat.com> 0.13.3-2
 - Add upstream patches fixing CVE-2016-9577 and CVE-2016-9578
 
