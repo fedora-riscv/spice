@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.13.90
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -99,6 +99,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 0.13.90-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
+
 * Wed Jul 26 2017 Christophe Fergeau <cfergeau@redhat.com> 0.13.90-1
 - Update to latest upstream release (0.13.90)
 
