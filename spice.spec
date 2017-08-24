@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.13.90
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -21,8 +21,10 @@ BuildRequires:  glib2-devel >= 2.22
 BuildRequires:  spice-protocol >= 0.12.3
 BuildRequires:  celt051-devel
 BuildRequires:  opus-devel
-BuildRequires:  pixman-devel alsa-lib-devel openssl-devel libjpeg-devel
+BuildRequires:  pixman-devel openssl-devel libjpeg-devel
 BuildRequires:  libcacard-devel cyrus-sasl-devel
+BuildRequires:  lz4-devel
+BuildRequires:  gstreamer1-devel gstreamer1-plugins-base-devel
 BuildRequires:  pyparsing
 BuildRequires:  python-six
 BuildRequires:  gnupg2
@@ -71,7 +73,7 @@ gpgv2 --quiet --keyring %{SOURCE2} %{SOURCE1} %{SOURCE0}
 
 %build
 %define configure_client --disable-client
-%configure --enable-smartcard %{configure_client}
+%configure --enable-smartcard --disable-client --enable-lz4 --enable-gstreamer=1.0
 make %{?_smp_mflags} WARN_CFLAGS='' V=1
 
 
@@ -99,6 +101,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Thu Aug 24 2017 Christophe Fergeau <cfergeau@redhat.com> - 0.13.90-3
+- Add missing (new) BuildRequires, remove obsolete one
+
 * Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 0.13.90-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
