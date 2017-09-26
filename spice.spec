@@ -1,6 +1,6 @@
 Name:           spice
-Version:        0.13.90
-Release:        3%{?dist}
+Version:        0.13.91
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -25,6 +25,7 @@ BuildRequires:  pixman-devel openssl-devel libjpeg-devel
 BuildRequires:  libcacard-devel cyrus-sasl-devel
 BuildRequires:  lz4-devel
 BuildRequires:  gstreamer1-devel gstreamer1-plugins-base-devel
+BuildRequires:  orc-devel
 BuildRequires:  pyparsing
 BuildRequires:  python-six
 BuildRequires:  gnupg2
@@ -101,6 +102,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Tue Sep 26 2017 Christophe Fergeau <christophe@redhat.com> - 0.13.91-1
+- Update to latest upstream release
+
 * Thu Aug 24 2017 Christophe Fergeau <cfergeau@redhat.com> - 0.13.90-3
 - Add missing (new) BuildRequires, remove obsolete one
 
