@@ -1,5 +1,5 @@
 Name:           spice
-Version:        0.13.91
+Version:        0.14.0
 Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
@@ -102,6 +102,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Wed Oct 11 2017 Christophe Fergeau <cfergeau@redhat.com> - 0.14.0-1
+- Update to new stable release
+
 * Tue Sep 26 2017 Christophe Fergeau <christophe@redhat.com> - 0.13.91-1
 - Update to latest upstream release
 
