@@ -26,8 +26,6 @@ BuildRequires:  libcacard-devel cyrus-sasl-devel
 BuildRequires:  lz4-devel
 BuildRequires:  gstreamer1-devel gstreamer1-plugins-base-devel
 BuildRequires:  orc-devel
-BuildRequires:  pyparsing
-BuildRequires:  python-six
 BuildRequires:  gnupg2
 BuildRequires:  git-core
 
