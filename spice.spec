@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.14.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -10,7 +10,7 @@ Source1:        http://www.spice-space.org/download/releases/%{name}-%{version}.
 Source2:        cfergeau-29AC6C82.keyring
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} <= 7
 ExclusiveArch:  x86_64
 %else
 ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
@@ -100,6 +100,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Wed Nov 08 2017 Merlin Mathesius <mmathesi@redhat.com> - 0.14.0-2
+- Cleanup spec file conditionals
+
 * Wed Oct 11 2017 Christophe Fergeau <cfergeau@redhat.com> - 0.14.0-1
 - Update to new stable release
 
