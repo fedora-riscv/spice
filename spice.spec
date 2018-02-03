@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.14.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -83,8 +83,7 @@ rm -f %{buildroot}%{_libdir}/libspice-server.la
 mkdir -p %{buildroot}%{_libexecdir}
 
 
-%post server -p /sbin/ldconfig
-%postun server -p /sbin/ldconfig
+%ldconfig_scriptlets server
 
 
 %files server
@@ -100,6 +99,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Sat Feb 03 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.14.0-3
+- Switch to %%ldconfig_scriptlets
+
 * Wed Nov 08 2017 Merlin Mathesius <mmathesi@redhat.com> - 0.14.0-2
 - Cleanup spec file conditionals
 
