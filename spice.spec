@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.14.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -99,6 +99,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 0.14.0-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
 * Sat Feb 03 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 0.14.0-3
 - Switch to %%ldconfig_scriptlets
 
