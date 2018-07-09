@@ -16,6 +16,7 @@ ExclusiveArch:  x86_64
 ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
 %endif
 
+BuildRequires:  gcc
 BuildRequires:  pkgconfig
 BuildRequires:  glib2-devel >= 2.22
 BuildRequires:  spice-protocol >= 0.12.3
