@@ -1,6 +1,6 @@
 Name:           spice
-Version:        0.14.0
-Release:        5%{?dist}
+Version:        0.14.1
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 Group:          User Interface/Desktops
 License:        LGPLv2+
@@ -20,7 +20,6 @@ BuildRequires:  gcc
 BuildRequires:  pkgconfig
 BuildRequires:  glib2-devel >= 2.22
 BuildRequires:  spice-protocol >= 0.12.3
-BuildRequires:  celt051-devel
 BuildRequires:  opus-devel
 BuildRequires:  pixman-devel openssl-devel libjpeg-devel
 BuildRequires:  libcacard-devel cyrus-sasl-devel
@@ -100,6 +99,11 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Fri Aug 17 2018 Christophe Fergeau <cfergeau@redhat.com> - 0.14.1-1
+- New upstream release
+- Disable celt 0.5.1 support, Opus support has been there for 4 years, so
+  celt should no longer be needed
+
 * Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 0.14.0-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
