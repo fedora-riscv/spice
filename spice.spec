@@ -1,12 +1,13 @@
 Name:           spice
 Version:        0.14.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Implements the SPICE protocol
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
 Source1:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2.sign
 Source2:        cfergeau-29AC6C82.keyring
+Patch1:         0001-memslot-Fix-off-by-one-error-in-group-slot-boundary-.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel} && 0%{?rhel} <= 7
@@ -96,6 +97,10 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Tue Feb 05 2019 Christophe Fergeau <cfergeau@redhat.com> - 0.14.1-3
+- Fix off-by-one error during guest-to-host memory address conversion
+  Resolves: CVE-2019-3813
+
 * Sun Feb 03 2019 Fedora Release Engineering <releng@fedoraproject.org> - 0.14.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
