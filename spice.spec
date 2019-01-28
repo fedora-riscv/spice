@@ -2,7 +2,6 @@ Name:           spice
 Version:        0.14.1
 Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
-Group:          User Interface/Desktops
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
@@ -39,7 +38,6 @@ variety of machine architectures.
 
 %package server
 Summary:        Implements the server side of the SPICE protocol
-Group:          System Environment/Libraries
 Obsoletes:      spice-client < %{version}-%{release}
 
 %description server
@@ -55,7 +53,6 @@ to be a SPICE server.
 
 %package server-devel
 Summary:        Header files, libraries and development documentation for spice-server
-Group:          Development/Libraries
 Requires:       %{name}-server%{?_isa} = %{version}-%{release}
 Requires:       pkgconfig
 
