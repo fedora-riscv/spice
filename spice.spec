@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.14.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Implements the SPICE protocol
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
@@ -96,6 +96,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Sun Feb 03 2019 Fedora Release Engineering <releng@fedoraproject.org> - 0.14.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Fri Aug 17 2018 Christophe Fergeau <cfergeau@redhat.com> - 0.14.1-1
 - New upstream release
 - Disable celt 0.5.1 support, Opus support has been there for 4 years, so
