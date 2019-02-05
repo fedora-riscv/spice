@@ -70,7 +70,7 @@ gpgv2 --quiet --keyring %{SOURCE2} %{SOURCE1} %{SOURCE0}
 
 %build
 %define configure_client --disable-client
-%configure --enable-smartcard --disable-client --enable-lz4 --enable-gstreamer=1.0
+%configure --enable-smartcard --disable-client --enable-lz4 --enable-gstreamer=1.0 --disable-celt051
 make %{?_smp_mflags} WARN_CFLAGS='' V=1
 
 
