@@ -1,13 +1,12 @@
 Name:           spice
-Version:        0.14.1
-Release:        3%{?dist}
+Version:        0.14.2
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
 Source1:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2.sign
-Source2:        cfergeau-29AC6C82.keyring
-Patch1:         0001-memslot-Fix-off-by-one-error-in-group-slot-boundary-.patch
+Source2:        victortoso-E37A484F.keyring
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
 %if 0%{?rhel} && 0%{?rhel} <= 7
@@ -19,7 +18,7 @@ ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
 BuildRequires:  gcc
 BuildRequires:  pkgconfig
 BuildRequires:  glib2-devel >= 2.22
-BuildRequires:  spice-protocol >= 0.12.3
+BuildRequires:  spice-protocol >= 0.14.0
 BuildRequires:  opus-devel
 BuildRequires:  pixman-devel openssl-devel libjpeg-devel
 BuildRequires:  libcacard-devel cyrus-sasl-devel
@@ -97,6 +96,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Tue Apr 30 2019 Victor Toso <victortoso@redhat.com> - 0.14.2-1
+- Update to 0.14.2
+
 * Tue Feb 05 2019 Christophe Fergeau <cfergeau@redhat.com> - 0.14.1-3
 - Fix off-by-one error during guest-to-host memory address conversion
   Resolves: CVE-2019-3813
