@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.14.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Implements the SPICE protocol
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
@@ -96,6 +96,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Fri Jan 31 2020 Fedora Release Engineering <releng@fedoraproject.org> - 0.14.2-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Fri Jul 26 2019 Fedora Release Engineering <releng@fedoraproject.org> - 0.14.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
