@@ -1,11 +1,11 @@
 Name:           spice
-Version:        0.14.3
-Release:        3%{?dist}
+Version:        0.15.0
+Release:        1%{?dist}
 Summary:        Implements the SPICE protocol
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
 Source0:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2
-Source1:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2.sign
+Source1:        http://www.spice-space.org/download/releases/%{name}-%{version}.tar.bz2.sig
 Source2:        victortoso-E37A484F.keyring
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=613529
@@ -16,7 +16,7 @@ ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
 %endif
 
 BuildRequires: make
-BuildRequires:  gcc
+BuildRequires:  gcc gcc-c++
 BuildRequires:  pkgconfig
 BuildRequires:  glib2-devel >= 2.22
 BuildRequires:  spice-protocol >= 0.14.0
@@ -70,7 +70,7 @@ gpgv2 --quiet --keyring %{SOURCE2} %{SOURCE1} %{SOURCE0}
 
 %build
 %define configure_client --disable-client
-%configure --enable-smartcard --disable-client --enable-lz4 --enable-gstreamer=1.0 --disable-celt051
+%configure --enable-smartcard --disable-client --enable-lz4 --enable-gstreamer=1.0 --disable-celt051 --disable-werror
 make %{?_smp_mflags} WARN_CFLAGS='' V=1
 
 
@@ -97,6 +97,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Mon Apr 19 2021 Victor Toso <victortoso@redhat.com> - 0.15.0-1
+- Update to 0.15.0
+
 * Wed Jan 27 2021 Fedora Release Engineering <releng@fedoraproject.org> - 0.14.3-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
