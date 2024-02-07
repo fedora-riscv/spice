@@ -1,6 +1,6 @@
 Name:           spice
 Version:        0.15.1
-Release:        3%{?dist}
+Release:        3.rv64%{?dist}
 Summary:        Implements the SPICE protocol
 License:        LGPLv2+
 URL:            http://www.spice-space.org/
@@ -12,7 +12,7 @@ Source2:        victortoso-E37A484F.keyring
 %if 0%{?rhel} && 0%{?rhel} <= 7
 ExclusiveArch:  x86_64
 %else
-ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64
+ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64 riscv64
 %endif
 
 BuildRequires: make
@@ -97,6 +97,9 @@ mkdir -p %{buildroot}%{_libexecdir}
 
 
 %changelog
+* Wed Feb 07 2024 Songsong Zhang <U2FsdGVkX1@gmail.com> - 0.15.1-3.rv64
+- Add riscv64 support
+
 * Sat Jul 22 2023 Fedora Release Engineering <releng@fedoraproject.org> - 0.15.1-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
 
